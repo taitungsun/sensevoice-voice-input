@@ -61,6 +61,13 @@ object SpokenPunct {
         Regex("\\s*\\b" + w.replace(" ", "\\s+") + "\\b", RegexOption.IGNORE_CASE) to m
     }
 
+    /**
+     * SenseVoice (ITN on) ends every Chinese utterance with "。". In an IME that
+     * is unwanted, so drop the model's final "。" before spoken words are mapped;
+     * a spoken "句號" at the end still becomes "。".
+     */
+    fun dropAutoFinalStop(text: String): String = text.trimEnd().removeSuffix("。")
+
     fun apply(text: String): String {
         var out = text
         for ((word, mark) in MAP) out = out.replace(word, mark)

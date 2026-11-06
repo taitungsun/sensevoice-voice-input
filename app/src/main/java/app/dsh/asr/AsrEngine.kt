@@ -512,7 +512,7 @@ class CaptureSession(
 
     private fun resultBundle(text: String): android.os.Bundle = android.os.Bundle().apply {
         // F21: output Traditional Chinese with Taiwan wording (OpenCC s2twp chain).
-        val out = runCatching { SpokenPunct.englishCase(SpokenPunct.apply(TwConverter.convert(ctx, text))) }
+        val out = runCatching { SpokenPunct.englishCase(SpokenPunct.apply(SpokenPunct.dropAutoFinalStop(TwConverter.convert(ctx, text)))) }
             .onFailure { Log.e(TAG, "s2twp failed", it) }.getOrDefault(text)
         Log.i(TAG, "delivered: $out")
         putStringArrayList(
