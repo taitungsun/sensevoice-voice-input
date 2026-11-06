@@ -32,18 +32,18 @@ class MainActivity : Activity(), DownloadBus.Listener {
         tvServiceState = findViewById(R.id.tvServiceState)
         tvModelState = findViewById(R.id.tvModelState)
 
-        // 可用性检测（v0.3.0）：主人问「怎么确认能不能正常使用」——
-        // 一键跑四层检测（服务注册 / 系统默认 / 模型加载 / 完整链路），逐项给结论
+        // 可用性檢測（v0.3.0）：主人問「怎麼確認能不能正常使用」——
+        // 一鍵跑四層檢測（服務註冊 / 系統預設 / 模型載入 / 完整鏈路），逐項給結論
         findViewById<android.view.View>(R.id.rowRunCheck).setOnClickListener { runCheck() }
-        // 「设为系统默认」（v0.4.0）：三级尝试
-        //  ① Shizuku（主人要求：尝试申请 SHZ 权限）—— 有装就用它，成功率最高
-        //  ② root / 直接写
-        //  ③ 都不行 → 明确告知改用「调用方指定服务」
+        // 「設為系統預設」（v0.4.0）：三級嘗試
+        //  ① Shizuku（主人要求：嘗試申請 SHZ 許可權）—— 有裝就用它，成功率最高
+        //  ② root / 直接寫
+        //  ③ 都不行 → 明確告知改用「呼叫方指定服務」
         findViewById<android.view.View>(R.id.rowSetDefault).setOnClickListener {
             setDefaultFlow()
         }
         findViewById<android.view.View>(R.id.rowOpenSettings).setOnClickListener {
-            // 多路径兜底：国产 ROM 的设置入口很乱，逐条尝试直到真的跳走
+            // 多路徑兜底：國產 ROM 的設定入口很亂，逐條嘗試直到真的跳走
             if (!SelfCheck.openVoiceInputSettings(this)) {
                 Ui.toast(this, getString(R.string.check_open_fail))
             }
@@ -71,7 +71,7 @@ class MainActivity : Activity(), DownloadBus.Listener {
         super.onPause()
     }
 
-    // ------------------------------------------------------------------ 状态
+    // ------------------------------------------------------------------ 狀態
 
     private fun refreshStatus() {
         val mine = ComponentName(this, AsrRecognitionService::class.java)
@@ -91,13 +91,13 @@ class MainActivity : Activity(), DownloadBus.Listener {
         val isDefault = current.startsWith(packageName)
 
         tvServiceState.text = buildString {
-            append(if (declared) "服务注册：已声明 RecognitionService ✓\n" else "服务注册：未在清单中找到 ✗\n")
-            append("系统可见识别服务：${allServices.size} 个")
-            if (mineIndex >= 0) append("（本机在列表中 ✓）") else append("（本机未被系统枚举 ✗）")
+            append(if (declared) "服務註冊：已宣告 RecognitionService ✓\n" else "服務註冊：未在清單中找到 ✗\n")
+            append("系統可見辨識服務：${allServices.size} 個")
+            if (mineIndex >= 0) append("（本 App 在清單中 ✓）") else append("（本 App 未被系統列出 ✗）")
             append("\n")
             append(
-                if (isDefault) "系统默认识别服务：本应用 ✓（其它 App 直接调用即可）"
-                else "系统默认识别服务：${if (current.isBlank()) "未设置" else current}"
+                if (isDefault) "系統預設辨識服務：本 App ✓（其他 App 直接呼叫即可）"
+                else "系統預設辨識服務：${if (current.isBlank()) "未設定" else current}"
             )
         }
         tvServiceState.setTextColor(Ui.statusColor(declared && mineIndex >= 0, warn = declared))
@@ -108,10 +108,10 @@ class MainActivity : Activity(), DownloadBus.Listener {
         val def = prefs.defaultModel()
         val used = ModelCatalog.MODELS.sumOf { store.storedBytes(it) }
         tvModelState.text = buildString {
-            append("默认模型：${def?.name ?: "-"}（${def?.let { ModelCatalog.human(it.totalBytes) } ?: "-"}）\n")
-            append("已就绪模型：${if (ready.isEmpty()) "无（先去模型管理下载）" else ready.joinToString("、") { it.name }}\n")
-            append("已占用空间：${ModelCatalog.human(used)}\n")
-            append("语言偏好：${prefs.language} · 流式优先：${if (prefs.preferStreaming) "开" else "关"}")
+            append("預設模型：${def?.name ?: "-"}（${def?.let { ModelCatalog.human(it.totalBytes) } ?: "-"}）\n")
+            append("已就緒模型：${if (ready.isEmpty()) "無（先去模型管理下載）" else ready.joinToString("、") { it.name }}\n")
+            append("已佔用空間：${ModelCatalog.human(used)}\n")
+            append("語言偏好：${prefs.language} · 串流優先：${if (prefs.preferStreaming) "開" else "關"}")
         }
         tvModelState.setTextColor(Ui.statusColor(ready.isNotEmpty(), warn = ready.isEmpty()))
     }
@@ -120,24 +120,24 @@ class MainActivity : Activity(), DownloadBus.Listener {
         val ok = runCatching {
             startActivity(Intent(Settings.ACTION_VOICE_INPUT_SETTINGS))
         }.isSuccess
-        if (!ok) Ui.toast(this, "系统没有「语音输入」设置页，请到 系统设置 → 语言和输入法 里找")
+        if (!ok) Ui.toast(this, "系統沒有「語音輸入」設定頁，請到 系統設定 → 語言和輸入法 裡找")
     }
 
-    // ------------------------------------------------------------------ 自检：走 SpeechRecognizer 全链路
+    // ------------------------------------------------------------------ 自檢：走 SpeechRecognizer 全鏈路
 
 
-    // ------------------------------------------------------------------ 自检：WAV 解码（无麦克风也能验）
+    // ------------------------------------------------------------------ 自檢：WAV 解碼（無麥克風也能驗）
 
 
-    // ------------------------------------------------------------------ 设为系统默认
+    // ------------------------------------------------------------------ 設為系統預設
 
-    /** Shizuku 可用性探测（onCreate 时记一次，供 requestPermission 用） */
+    /** Shizuku 可用性探測（onCreate 時記一次，供 requestPermission 用） */
     private fun probeShizuku() {
         ShizukuHelper.markInstalled(ShizukuHelper.isInstalled(this))
     }
 
     /**
-     * 设为系统默认识别服务：Shizuku 优先 → root/直接写 → 明确失败提示。
+     * 設為系統預設識別服務：Shizuku 優先 → root/直接寫 → 明確失敗提示。
      */
     private fun setDefaultFlow() {
         val spec = "${packageName}/${AsrRecognitionService::class.java.name}"
@@ -146,7 +146,7 @@ class MainActivity : Activity(), DownloadBus.Listener {
         tv.setTextColor(Ui.TEXT_DIM)
 
         when {
-            // ① Shizuku 已授权 → 直接执行
+            // ① Shizuku 已授權 → 直接執行
             ShizukuHelper.isAuthorized() -> {
                 tv.text = getString(R.string.set_via_shizuku)
                 Thread({
@@ -158,13 +158,13 @@ class MainActivity : Activity(), DownloadBus.Listener {
                     }
                 }, "shizuku-set").apply { isDaemon = true; start() }
             }
-            // ② 装了 Shizuku 但没授权 → 申请权限，成功后自动继续
+            // ② 裝了 Shizuku 但沒授權 → 申請許可權，成功後自動繼續
             ShizukuHelper.isInstalled(this) -> {
                 tv.text = getString(R.string.set_requesting_shizuku)
                 ShizukuHelper.requestPermission { granted ->
                     runOnUiThread {
                         if (granted) {
-                            setDefaultFlow()   // 授权成功 → 重走流程（这次会走 ①）
+                            setDefaultFlow()   // 授權成功 → 重走流程（這次會走 ①）
                         } else {
                             tv.text = getString(R.string.set_shizuku_denied)
                             tv.setTextColor(Ui.WARN)
@@ -173,7 +173,7 @@ class MainActivity : Activity(), DownloadBus.Listener {
                     }
                 }
             }
-            // ③ 没装 Shizuku → root/直接写，再不行给指引
+            // ③ 沒裝 Shizuku → root/直接寫，再不行給指引
             else -> {
                 tv.text = getString(R.string.set_no_shizuku)
                 Thread({
@@ -193,7 +193,7 @@ class MainActivity : Activity(), DownloadBus.Listener {
         }
     }
 
-    /** Shizuku 被拒后的兜底：root / 直接写 */
+    /** Shizuku 被拒後的兜底：root / 直接寫 */
     private fun fallbackSetDefault(spec: String, tv: TextView) {
         Thread({
             val ok = SelfCheck.trySetAsDefault(this)
@@ -204,11 +204,11 @@ class MainActivity : Activity(), DownloadBus.Listener {
         }, "fallback-set").apply { isDaemon = true; start() }
     }
 
-    // ------------------------------------------------------------------ 可用性检测
+    // ------------------------------------------------------------------ 可用性檢測
 
     /**
-     * 一键检测：后台跑（第 ④ 项要等识别回调），结果回主线程逐项显示。
-     * 每项都带「该怎么办」，把玄学问题变成可操作项。
+     * 一鍵檢測：後臺跑（第 ④ 項要等識別回撥），結果回主執行緒逐項顯示。
+     * 每項都帶「該怎麼辦」，把玄學問題變成可操作項。
      */
     private fun runCheck() {
         val tv = findViewById<TextView>(R.id.tvCheckResult)
@@ -248,7 +248,7 @@ class MainActivity : Activity(), DownloadBus.Listener {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         val granted = grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED
         if (!granted) {
-            android.widget.Toast.makeText(this, "麦克风权限被拒绝：识别服务将无法工作",
+            android.widget.Toast.makeText(this, "麥克風權限被拒絕：辨識服務將無法運作",
                 android.widget.Toast.LENGTH_LONG).show()
         }
         refreshStatus()

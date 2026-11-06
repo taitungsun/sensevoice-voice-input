@@ -19,7 +19,7 @@
             android:textSize="22sp"
             android:textStyle="bold" />
 
-        <!-- 默认模型 -->
+        <!-- 預設模型 -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -52,7 +52,7 @@
                 android:orientation="vertical" />
         </LinearLayout>
 
-        <!-- 识别语言 -->
+        <!-- 識別語言 -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -99,7 +99,7 @@
             </RadioGroup>
         </LinearLayout>
 
-        <!-- 模型下载源（v0.5.0）：默认跟随界面语言，可手动覆盖 -->
+        <!-- 模型下載源（v0.5.0）：預設跟隨介面語言，可手動覆蓋 -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -154,7 +154,7 @@
             </RadioGroup>
         </LinearLayout>
 
-        <!-- 流式偏好 + 端点参数 -->
+        <!-- 流式偏好 + 端點引數 -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -229,7 +229,7 @@
                 android:max="17" />
         </LinearLayout>
 
-        <!-- 服务信息 -->
+        <!-- 服務資訊 -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

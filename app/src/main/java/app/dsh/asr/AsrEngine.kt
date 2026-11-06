@@ -29,10 +29,10 @@ import kotlin.math.sqrt
 
 const val SAMPLE_RATE = 16_000
 
-/** 音频小工具：WAV 读取、PCM16 → float、能量计算 */
+/** 音訊小工具：WAV 讀取、PCM16 → float、能量計算 */
 object AudioUtil {
 
-    /** 读 16bit PCM WAV → 16kHz 单声道 float（用于离线自检，不依赖麦克风） */
+    /** 讀 16bit PCM WAV → 16kHz 單聲道 float（用於離線自檢，不依賴麥克風） */
     fun readWavFloats(file: File): FloatArray {
         val bytes = file.readBytes()
         require(bytes.size > 44) { "wav too small" }
@@ -71,7 +71,7 @@ object AudioUtil {
         return if (rate == SAMPLE_RATE) mono else resample(mono, rate, SAMPLE_RATE)
     }
 
-    /** 线性插值重采样（测试音频用，够用） */
+    /** 線性插值重取樣（測試音訊用，夠用） */
     fun resample(input: FloatArray, from: Int, to: Int): FloatArray {
         if (from == to) return input
         val outLen = (input.size.toLong() * to / from).toInt()
@@ -104,7 +104,7 @@ object AudioUtil {
             ((b[at + 2].toInt() and 0xFF) shl 16) or ((b[at + 3].toInt() and 0xFF) shl 24)
 }
 
-/** 一次识别请求的参数（由 RecognitionService 收到的 Intent 解析而来） */
+/** 一次識別請求的引數（由 RecognitionService 收到的 Intent 解析而來） */
 data class RequestParams(
     val langHint: String,       // auto | zh | en
     val partialsWanted: Boolean,
@@ -116,8 +116,8 @@ data class RequestParams(
 )
 
 /**
- * 引擎缓存：同一进程内复用 sherpa 识别器（加载 240MB 模型代价高，不能每次会话重建）。
- * 注意：sherpa 的 Recognizer 不是线程安全的，调用方需自行保证串行（本应用单会话串行）。
+ * 引擎快取：同一程序內複用 sherpa 識別器（載入 240MB 模型代價高，不能每次會話重建）。
+ * 注意：sherpa 的 Recognizer 不是執行緒安全的，呼叫方需自行保證序列（本應用單會話序列）。
  */
 object EngineHolder {
 
@@ -127,16 +127,33 @@ object EngineHolder {
     private var offline: OfflineRecognizer? = null
     private var online: OnlineRecognizer? = null
 
+    private var offlineCfg: OfflineRecognizerConfig? = null
+    private var offlineLang: String? = null
+
     @Synchronized
     fun offline(ctx: Context, model: AsrModel, lang: String): OfflineRecognizer {
-        val key = "offline:${model.id}|$lang"
-        if (key == cachedKey) offline?.let { return it }
+        // F21: the key no longer includes the language. Loading takes ~9 s on the
+        // F21, so a language switch (TT9 中文 <-> English) only updates the config;
+        // SenseVoice reads the language from the config at every decode.
+        val key = "offline:${model.id}"
+        if (key == cachedKey) offline?.let { r ->
+            if (lang != offlineLang) {
+                offlineCfg?.let { cfg ->
+                    cfg.modelConfig.senseVoice.language = lang
+                    r.setConfig(cfg)
+                    Log.i(TAG, "language switched ${offlineLang} -> $lang without reload")
+                }
+                offlineLang = lang
+            }
+            return r
+        }
         clearLocked()
         val t0 = SystemClock.elapsedRealtime()
         val r = buildOffline(ctx, model, lang)
         Log.i(TAG, "offline recognizer ready in ${SystemClock.elapsedRealtime() - t0} ms (${model.id}, lang=$lang)")
         cachedKey = key
         offline = r
+        offlineLang = lang
         return r
     }
 
@@ -162,6 +179,8 @@ object EngineHolder {
         offline = null
         online = null
         cachedKey = null
+        offlineCfg = null
+        offlineLang = null
     }
 
     private fun pathOf(ctx: Context, model: AsrModel, prefix: String): String {
@@ -176,7 +195,7 @@ object EngineHolder {
         val tokens = model.files.first { it.name == "tokens.txt" }
         val mc = OfflineModelConfig().apply {
             this.tokens = store.fileOf(model, tokens).absolutePath
-            numThreads = 2
+            numThreads = 4  // F21 (MT6761, 4x A53): 4 threads decode ~1.5x faster than 2
             debug = false
             provider = "cpu"
         }
@@ -202,8 +221,9 @@ object EngineHolder {
             modelConfig = mc
             decodingMethod = "greedy_search"
         }
-        // 模型放在外部私有目录（SD 卡路径）：必须传 null AssetManager，
-        // 否则 sherpa 原生层会拒绝加载并 abort 进程（file-utils.cc: ReadFile）。
+        offlineCfg = cfg
+        // 模型放在外部私有目錄（SD 卡路徑）：必須傳 null AssetManager，
+        // 否則 sherpa 原生層會拒絕載入並 abort 程序（file-utils.cc: ReadFile）。
         return OfflineRecognizer(null, cfg)
     }
 
@@ -218,7 +238,7 @@ object EngineHolder {
         val mc = OnlineModelConfig().apply {
             this.transducer = transducer
             this.tokens = store.fileOf(model, tokens).absolutePath
-            numThreads = 2
+            numThreads = 4  // F21 (MT6761, 4x A53): 4 threads decode ~1.5x faster than 2
             debug = false
             provider = "cpu"
             modelType = "zipformer"
@@ -228,22 +248,22 @@ object EngineHolder {
             modelConfig = mc
             decodingMethod = "greedy_search"
             enableEndpoint = true
-            // 端点判定参数（v0.4.1 提速，主人反馈"不够实时"）：
-            //  sherpa 的 EndpointRule(必须含非静音, 尾部静音秒数, 最小长度秒数)
-            //  旧值 rule1=2.4s 太保守 —— 说完话要等 2.4 秒才判定结束，感觉拖沓。
-            //  新值 1.2s：正常语速下句间停顿约 0.5~1s，1.2s 既不会切句又明显更快。
+            // 端點判定引數（v0.4.1 提速，主人反饋"不夠實時"）：
+            //  sherpa 的 EndpointRule(必須含非靜音, 尾部靜音秒數, 最小長度秒數)
+            //  舊值 rule1=2.4s 太保守 —— 說完話要等 2.4 秒才判定結束，感覺拖沓。
+            //  新值 1.2s：正常語速下句間停頓約 0.5~1s，1.2s 既不會切句又明顯更快。
             endpointConfig = EndpointConfig(
-                rule1 = EndpointRule(false, 1.2f, 0.0f),   // 说完后的静音判定
-                rule2 = EndpointRule(true, 0.8f, 0.0f),    // 一直没说话时的判定
-                rule3 = EndpointRule(false, 0.0f, 20.0f),  // 超长兜底
+                rule1 = EndpointRule(false, 1.2f, 0.0f),   // 說完後的靜音判定
+                rule2 = EndpointRule(true, 0.8f, 0.0f),    // 一直沒說話時的判定
+                rule3 = EndpointRule(false, 0.0f, 20.0f),  // 超長兜底
             )
         }
-        // 同上：绝对路径 + null assetManager
+        // 同上：絕對路徑 + null assetManager
         return OnlineRecognizer(null, cfg)
     }
 }
 
-/** 一次识别会话：录音 → 送入引擎 → 回调结果。运行在独立线程，避免阻塞服务主线程。 */
+/** 一次識別會話：錄音 → 送入引擎 → 回撥結果。執行在獨立執行緒，避免阻塞服務主執行緒。 */
 class CaptureSession(
     private val ctx: Context,
     private val callback: android.speech.RecognitionService.Callback,
@@ -265,10 +285,10 @@ class CaptureSession(
         }
     }
 
-    /** 调用方 stopListening()：把已有音频当作"用户说完"处理，返回最终结果 */
+    /** 呼叫方 stopListening()：把已有音訊當作"使用者說完"處理，返回最終結果 */
     fun requestStop() = stopFlag.set(true)
 
-    /** 调用方 cancel()：丢弃结果，立即结束 */
+    /** 呼叫方 cancel()：丟棄結果，立即結束 */
     fun cancel() {
         cancelFlag.set(true)
         stopFlag.set(true)
@@ -307,6 +327,8 @@ class CaptureSession(
         }
         try {
             safe { callback.readyForSpeech(android.os.Bundle()) }
+            // F21: short buzz once the mic is recording, so the user knows to speak.
+            buzz()
             if (model.streaming) runStreaming(recorder) else runOffline(recorder)
         } finally {
             if (ok) {
@@ -317,13 +339,15 @@ class CaptureSession(
         }
     }
 
-    // ------------------------------------------------------------------ 离线
+    // ------------------------------------------------------------------ 離線
 
     private fun runOffline(recorder: AudioRecord) {
-        val recognizer = EngineHolder.offline(ctx, model, langCode)
+        // F21: record first; the recognizer is only needed for the final decode
+        // (partials are off), so a model still loading does not block listening.
+        val recognizer by lazy { EngineHolder.offline(ctx, model, langCode) }
         val buf = FloatBuffer()
         val chunk = ShortArray(CHUNK_SHORTS)
-        // sherpa Recognizer 非线程安全：中间解码线程与最终解码共用一把锁串行化
+        // sherpa Recognizer 非執行緒安全：中間解碼執行緒與最終解碼共用一把鎖序列化
         val engineLock = Any()
         val partial = PartialDecoder { samples -> synchronized(engineLock) { decodeOffline(recognizer, samples) } }
         var noiseFloor = 0.004f
@@ -369,13 +393,15 @@ class CaptureSession(
             if (speechStarted && now - lastVoiceAt > params.silenceMs) { reason = "silence"; break }
             if (now - startAt > params.maxUtteranceMs) { reason = "max-length"; break }
 
-            if (params.partialsWanted && speechStarted && buf.size > SAMPLE_RATE && now - lastPartialAt > PARTIAL_INTERVAL_MS) {
+            // F21: partial re-decodes of the whole buffer compete with recording on
+            // 4 slow cores and delay the final result, so they are off for offline models.
+            if (OFFLINE_PARTIALS && params.partialsWanted && speechStarted && buf.size > SAMPLE_RATE && now - lastPartialAt > PARTIAL_INTERVAL_MS) {
                 lastPartialAt = now
                 partial.submit(buf.snapshot())
             }
         }
 
-        // 先等中间解码器退出，再独占 recognizer 做最终解码（sherpa recognizer 非线程安全）
+        // 先等中間解碼器退出，再獨佔 recognizer 做最終解碼（sherpa recognizer 非執行緒安全）
         partial.stopAndJoin(8_000)
 
         if (cancelFlag.get()) return
@@ -386,7 +412,7 @@ class CaptureSession(
             return
         }
         val all = buf.toFloatArray()
-        val padded = FloatArray(all.size + SAMPLE_RATE / 3)      // 尾部补 300ms 静音，帮模型收尾
+        val padded = FloatArray(all.size + SAMPLE_RATE / 3)      // 尾部補 300ms 靜音，幫模型收尾
         System.arraycopy(all, 0, padded, 0, all.size)
         val text = if (padded.size > SAMPLE_RATE / 2) runCatching {
             synchronized(engineLock) { decodeOffline(recognizer, padded) }
@@ -485,12 +511,23 @@ class CaptureSession(
     }
 
     private fun resultBundle(text: String): android.os.Bundle = android.os.Bundle().apply {
+        // F21: output Traditional Chinese with Taiwan wording (OpenCC s2twp chain).
+        val out = runCatching { SpokenPunct.englishCase(SpokenPunct.apply(TwConverter.convert(ctx, text))) }
+            .onFailure { Log.e(TAG, "s2twp failed", it) }.getOrDefault(text)
+        Log.i(TAG, "delivered: $out")
         putStringArrayList(
             android.speech.SpeechRecognizer.RESULTS_RECOGNITION,
-            arrayListOf(text),
+            arrayListOf(out),
         )
         putFloatArray(android.speech.SpeechRecognizer.CONFIDENCE_SCORES, floatArrayOf(-1f))
         putString(EXTRA_ENGINE, "${model.name} · sherpa-onnx")
+    }
+
+    private fun buzz() {
+        runCatching {
+            val v = ctx.getSystemService(android.content.Context.VIBRATOR_SERVICE) as android.os.Vibrator
+            v.vibrate(android.os.VibrationEffect.createOneShot(BUZZ_MS, android.os.VibrationEffect.DEFAULT_AMPLITUDE))
+        }.onFailure { Log.w(TAG, "vibrate failed: ${it.message}") }
     }
 
     private fun safeError(code: Int) {
@@ -506,14 +543,14 @@ class CaptureSession(
         }
     }
 
-    // ------------------------------------------------------------------ 录音
+    // ------------------------------------------------------------------ 錄音
 
     private fun openRecorder(): AudioRecord {
         val minBuf = AudioRecord.getMinBufferSize(
             SAMPLE_RATE, AudioFormat.CHANNEL_IN_MONO, AudioFormat.ENCODING_PCM_16BIT,
         )
         if (minBuf <= 0) throw IllegalStateException("getMinBufferSize=$minBuf")
-        val bufferBytes = max(minBuf, SAMPLE_RATE * 2 * 4)   // 约 4 秒余量
+        val bufferBytes = max(minBuf, SAMPLE_RATE * 2 * 4)   // 約 4 秒餘量
         val format = AudioFormat.Builder()
             .setEncoding(AudioFormat.ENCODING_PCM_16BIT)
             .setSampleRate(SAMPLE_RATE)
@@ -521,7 +558,7 @@ class CaptureSession(
             .build()
         val source = MediaRecorder.AudioSource.VOICE_RECOGNITION
 
-        // API 31+：按官方建议把麦克风访问归因到调用方（识别失败则退回普通上下文）
+        // API 31+：按官方建議把麥克風訪問歸因到呼叫方（識別失敗則退回普通上下文）
         if (Build.VERSION.SDK_INT >= 31) {
             val attributed = runCatching {
                 val attribCtx = ctx.createContext(
@@ -564,11 +601,13 @@ class CaptureSession(
         private const val TAG = "CaptureSession"
         private const val CHUNK_SHORTS = SAMPLE_RATE / 10          // 100ms
         private const val PARTIAL_INTERVAL_MS = 1_200L
+        private const val OFFLINE_PARTIALS = false
+        private const val BUZZ_MS = 80L
         const val EXTRA_ENGINE = "app.dsh.asr.ENGINE"
     }
 }
 
-/** 只增不改的 float 环形缓冲（会话内音频累积） */
+/** 只增不改的 float 環形緩衝（會話內音訊累積） */
 class FloatBuffer(initialCapacity: Int = SAMPLE_RATE * 8) {
     private var data = FloatArray(initialCapacity)
     var size = 0
@@ -590,8 +629,8 @@ class FloatBuffer(initialCapacity: Int = SAMPLE_RATE * 8) {
 }
 
 /**
- * 离线模型的"中间结果"解码线程：只处理最新快照，避免阻塞录音线程丢音频。
- * 同一个 Recognizer 不能被并发调用，本线程在会话结束前会被 join。
+ * 離線模型的"中間結果"解碼執行緒：只處理最新快照，避免阻塞錄音執行緒丟音訊。
+ * 同一個 Recognizer 不能被併發呼叫，本執行緒在會話結束前會被 join。
  */
 class PartialDecoder(private val decode: (FloatArray) -> String) {
 
@@ -642,7 +681,7 @@ class PartialDecoder(private val decode: (FloatArray) -> String) {
     }
 }
 
-/** 离线引擎自检：直接用 WAV 文件跑推理，用于在没有麦克风的模拟器上验证链路 */
+/** 離線引擎自檢：直接用 WAV 檔案跑推理，用於在沒有麥克風的模擬器上驗證鏈路 */
 object EngineSelfTest {
 
     data class Result(val text: String, val decodeMs: Long, val audioSec: Float, val ok: Boolean, val error: String?)

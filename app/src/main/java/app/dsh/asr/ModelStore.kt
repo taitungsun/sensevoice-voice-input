@@ -8,28 +8,28 @@ import java.net.HttpURLConnection
 import java.net.URL
 import java.util.concurrent.atomic.AtomicBoolean
 
-/** 模型在本地磁盘上的状态 */
+/** 模型在本地磁碟上的狀態 */
 enum class ModelState { MISSING, PARTIAL, READY }
 
 class DownloadCancelled : Exception("download cancelled")
 
 /**
- * 模型仓库：负责落地路径、状态判断、下载（断点续传 + 体积校验）、删除。
+ * 模型倉庫：負責落地路徑、狀態判斷、下載（斷點續傳 + 體積校驗）、刪除。
  *
- * 落盘位置：`<外部私有目录>/models/<modelId>/<file>`，外部私有目录不可用时退回内部 filesDir。
- * 说明：外部私有目录无需任何存储权限（应用专属目录），且方便用户用文件管理器查看/清理。
+ * 落盤位置：`<外部私有目錄>/models/<modelId>/<file>`，外部私有目錄不可用時退回內部 filesDir。
+ * 說明：外部私有目錄無需任何儲存許可權（應用專屬目錄），且方便使用者用檔案管理器檢視/清理。
  */
 class ModelStore(context: Context) {
 
     private val appCtx = context.applicationContext
 
     /**
-     * 当前生效的下载源（v0.5.0）。
-     * 按界面语言推断（中文→hf-mirror，其它→HuggingFace 官方），设置页可手动覆盖。
+     * 當前生效的下載源（v0.5.0）。
+     * 按介面語言推斷（中文→hf-mirror，其它→HuggingFace 官方），設定頁可手動覆蓋。
      *
-     * ⚠️ 语言必须从 `resources.configuration` 读，**不能用 `Locale.getDefault()`**：
-     * 后者是 JVM 缓存的静态值，Android 在系统语言变更（或应用内切换语言）后
-     * 不会刷新它 —— 实测把系统切到中文后仍解析成官方源。
+     * ⚠️ 語言必須從 `resources.configuration` 讀，**不能用 `Locale.getDefault()`**：
+     * 後者是 JVM 快取的靜態值，Android 在系統語言變更（或應用內切換語言）後
+     * 不會重新整理它 —— 實測把系統切到中文後仍解析成官方源。
      */
     private fun source(): ModelCatalog.Source =
         Prefs(appCtx).modelSource(LocaleHelper.langTag(appCtx))
@@ -45,13 +45,13 @@ class ModelStore(context: Context) {
 
     private fun partOf(model: AsrModel, file: ModelFile): File = File(dirOf(model), file.name + ".part")
 
-    /** 单个文件是否完整（存在且字节数精确匹配目录中登记的实测大小） */
+    /** 單個檔案是否完整（存在且位元組數精確匹配目錄中登記的實測大小） */
     fun fileReady(model: AsrModel, file: ModelFile): Boolean {
         val f = fileOf(model, file)
         return f.isFile && f.length() == file.bytes
     }
 
-    /** 已完整落盘的文件集合 */
+    /** 已完整落盤的檔案集合 */
     fun readyFiles(model: AsrModel): List<ModelFile> = model.files.filter { fileReady(model, it) }
 
     fun state(model: AsrModel): ModelState {
@@ -61,7 +61,7 @@ class ModelStore(context: Context) {
         return if (ready > 0 || hasPartial) ModelState.PARTIAL else ModelState.MISSING
     }
 
-    /** 已占用/已下载字节数（含 .part 断点） */
+    /** 已佔用/已下載位元組數（含 .part 斷點） */
     fun storedBytes(model: AsrModel): Long = model.files.sumOf { f ->
         val done = if (fileReady(model, f)) f.bytes else 0L
         done + (partOf(model, f).takeIf { it.isFile }?.length() ?: 0L)
@@ -73,15 +73,15 @@ class ModelStore(context: Context) {
         dir.delete()
     }
 
-    /** 当前已完整下载的模型 */
+    /** 當前已完整下載的模型 */
     fun readyModels(): List<AsrModel> = ModelCatalog.MODELS.filter { state(it) == ModelState.READY }
 
     /**
-     * 下载整个模型（多文件串行）。
+     * 下載整個模型（多檔案序列）。
      *
-     * @param onProgress (已完成字节, 总字节, 当前文件说明)
-     * @param cancel 外部取消标志（UI 上的「取消」）
-     * @return true = 全部文件校验通过
+     * @param onProgress (已完成位元組, 總位元組, 當前檔案說明)
+     * @param cancel 外部取消標誌（UI 上的「取消」）
+     * @return true = 全部檔案校驗透過
      */
     fun download(
         model: AsrModel,
@@ -102,8 +102,8 @@ class ModelStore(context: Context) {
     }
 
     /**
-     * 单文件下载：支持 HTTP Range 断点续传。
-     * `.part` 累积 → 校验长度 == 目录登记字节数 → 原子改名成正式文件。
+     * 單檔案下載：支援 HTTP Range 斷點續傳。
+     * `.part` 累積 → 校驗長度 == 目錄登記位元組數 → 原子改名成正式檔案。
      */
     private fun downloadFile(
         model: AsrModel,
@@ -125,7 +125,7 @@ class ModelStore(context: Context) {
             if (cancel.get()) throw DownloadCancelled()
 
             var existing = if (part.isFile) part.length() else 0L
-            if (existing > file.bytes) {           // 本地比远端大：污染，从头来
+            if (existing > file.bytes) {           // 本地比遠端大：汙染，從頭來
                 part.delete()
                 existing = 0L
             }
@@ -182,11 +182,11 @@ class ModelStore(context: Context) {
                 conn?.disconnect()
             }
 
-            // 下载完成 → 严格校验字节数
+            // 下載完成 → 嚴格校驗位元組數
             val got = part.length()
             if (got == file.bytes) {
                 if (!part.renameTo(dest)) {
-                    // 改名失败（极少见）：直接把内容搬过去
+                    // 改名失敗（極少見）：直接把內容搬過去
                     part.copyTo(dest, overwrite = true)
                     part.delete()
                 }

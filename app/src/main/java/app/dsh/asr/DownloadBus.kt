@@ -9,8 +9,8 @@ import java.util.concurrent.CopyOnWriteArrayList
 import java.util.concurrent.atomic.AtomicBoolean
 
 /**
- * 应用级下载总线：模型下载跑在独立线程，跨页面持续进行；
- * 页面注册监听拿进度（主线程回调）。
+ * 應用級下載匯流排：模型下載跑在獨立執行緒，跨頁面持續進行；
+ * 頁面註冊監聽拿進度（主執行緒回撥）。
  */
 object DownloadBus {
 
@@ -58,7 +58,7 @@ object DownloadBus {
                         main.post { listeners.forEach { it.onProgress(model.id, done, total) } }
                     }
                 }
-                if (!ok) message = "网络或镜像异常（已重试 5 次）"
+                if (!ok) message = "網路或鏡像站異常（已重試 5 次）"
             } catch (e: DownloadCancelled) {
                 message = "已取消"
             } catch (t: Throwable) {

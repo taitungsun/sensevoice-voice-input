@@ -13,7 +13,7 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import java.util.Locale
 
-/** 模型管理页：列出全部模型，支持下载（断点续传+校验）、取消、删除、设为默认 */
+/** 模型管理頁：列出全部模型，支援下載（斷點續傳+校驗）、取消、刪除、設為預設 */
 class ModelsActivity : Activity(), DownloadBus.Listener {
 
     private lateinit var store: ModelStore
@@ -34,7 +34,7 @@ class ModelsActivity : Activity(), DownloadBus.Listener {
             onDelete = { model -> confirmDelete(model) },
             onUse = { model ->
                 prefs.defaultModelId = model.id
-                Ui.toast(this, "默认模型：${model.name}")
+                Ui.toast(this, "預設模型：${model.name}")
                 adapter.notifyDataSetChanged()
             },
         )
@@ -60,16 +60,16 @@ class ModelsActivity : Activity(), DownloadBus.Listener {
             Ui.toast(this, "正在取消…")
         } else {
             DownloadBus.start(this, model)
-            Ui.toast(this, "开始下载 ${model.name}")
+            Ui.toast(this, "開始下載 ${model.name}")
         }
         adapter.notifyDataSetChanged()
     }
 
     private fun confirmDelete(model: AsrModel) {
         AlertDialog.Builder(this)
-            .setTitle("删除 ${model.name}？")
-            .setMessage("将删除本地模型文件（${ModelCatalog.human(store.storedBytes(model))}）")
-            .setPositiveButton("删除") { _, _ ->
+            .setTitle("刪除 ${model.name}？")
+            .setMessage("將刪除本機模型檔案（${ModelCatalog.human(store.storedBytes(model))}）")
+            .setPositiveButton("刪除") { _, _ ->
                 DownloadBus.cancel(model.id)
                 store.delete(model)
                 progress.remove(model.id)
@@ -91,7 +91,7 @@ class ModelsActivity : Activity(), DownloadBus.Listener {
         if (ok) {
             Ui.toast(this, getString(R.string.toast_download_done, model?.name ?: modelId))
         } else if (message != "已取消") {
-            Ui.toast(this, getString(R.string.toast_download_failed, message ?: "未知错误"))
+            Ui.toast(this, getString(R.string.toast_download_failed, message ?: "未知錯誤"))
         }
         adapter.notifyDataSetChanged()
     }
@@ -118,11 +118,11 @@ class ModelsActivity : Activity(), DownloadBus.Listener {
 
             view.findViewById<TextView>(R.id.tvName).text = buildString {
                 append(model.name)
-                if (isDefault) append("  ·  默认")
+                if (isDefault) append("  ·  預設")
             }
             view.findViewById<TextView>(R.id.tvKind).text =
                 (if (model.streaming) getString(R.string.label_streaming) else getString(R.string.label_offline)) +
-                    if (model.recommended) " · 推荐" else ""
+                    if (model.recommended) " · 推薦" else ""
 
             view.findViewById<TextView>(R.id.tvMeta).text =
                 "${model.langs} · ${ModelCatalog.human(model.totalBytes)}\n${model.note}"
@@ -134,7 +134,7 @@ class ModelsActivity : Activity(), DownloadBus.Listener {
                 running && p != null -> {
                     val pct = if (p.second > 0) (p.first * 100 / p.second).toInt() else 0
                     tvState.text = String.format(
-                        Locale.US, "下载中 %d%% · %s / %s",
+                        Locale.US, "下載中 %d%% · %s / %s",
                         pct, ModelCatalog.human(p.first), ModelCatalog.human(p.second),
                     )
                     tvState.setTextColor(Ui.ACCENT)
@@ -142,10 +142,10 @@ class ModelsActivity : Activity(), DownloadBus.Listener {
                     bar.progress = pct
                 }
                 running -> {
-                    // 显示**实际使用的源**（v0.5.0：中文镜像 / 其它语言官方源）
+                    // 顯示**實際使用的源**（v0.5.0：中文映象 / 其它語言官方源）
                     val src = Prefs(this@ModelsActivity)
                         .modelSource(LocaleHelper.langTag(this@ModelsActivity))
-                    tvState.text = "下载中…（正在连接 ${src.base.substringAfter("://")}）"
+                    tvState.text = "下載中…（正在連線 ${src.base.substringAfter("://")}）"
                     tvState.setTextColor(Ui.ACCENT)
                     bar.visibility = View.VISIBLE
                     bar.isIndeterminate = true
@@ -153,9 +153,9 @@ class ModelsActivity : Activity(), DownloadBus.Listener {
                 else -> {
                     tvState.text = when (state) {
                         ModelState.READY -> getString(R.string.state_ready) +
-                            " · " + ModelCatalog.human(model.totalBytes) + " · 本地已校验"
-                        ModelState.PARTIAL -> "未完成 · 已下载 " +
-                            ModelCatalog.human(store.storedBytes(model)) + "（可继续下载）"
+                            " · " + ModelCatalog.human(model.totalBytes) + " · 已在本機驗證"
+                        ModelState.PARTIAL -> "未完成 · 已下載 " +
+                            ModelCatalog.human(store.storedBytes(model)) + "（可繼續下載）"
                         ModelState.MISSING -> getString(R.string.state_missing)
                     }
                     tvState.setTextColor(
@@ -173,8 +173,8 @@ class ModelsActivity : Activity(), DownloadBus.Listener {
             val btnDownload = view.findViewById<TextView>(R.id.btnDownload)
             btnDownload.text = when {
                 running -> getString(R.string.btn_cancel)
-                state == ModelState.READY -> "重新下载"
-                state == ModelState.PARTIAL -> "继续下载"
+                state == ModelState.READY -> "重新下載"
+                state == ModelState.PARTIAL -> "繼續下載"
                 else -> getString(R.string.btn_download)
             }
             btnDownload.setOnClickListener { onDownload(model) }
@@ -183,13 +183,13 @@ class ModelsActivity : Activity(), DownloadBus.Listener {
             btnUse.alpha = if (state == ModelState.READY) 1f else 0.4f
             btnUse.setOnClickListener {
                 if (state == ModelState.READY) onUse(model)
-                else Ui.toast(ctx, "先下载这个模型")
+                else Ui.toast(ctx, "先下載這個模型")
             }
 
             val btnDelete = view.findViewById<TextView>(R.id.btnDelete)
             btnDelete.alpha = if (state == ModelState.MISSING) 0.4f else 1f
             btnDelete.setOnClickListener {
-                if (state == ModelState.MISSING) Ui.toast(ctx, "本地没有这个模型")
+                if (state == ModelState.MISSING) Ui.toast(ctx, "本機沒有這個模型")
                 else onDelete(model)
             }
             return view

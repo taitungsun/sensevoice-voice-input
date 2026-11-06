@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  主界面（简洁版）。
+  主介面（簡潔版）。
 
-  设计原则（主人要求「弄得简单一点，不需要明确标明是 DSH 专属的」）：
-   · 四个卡片，一眼看完：状态 / 模型 / 使用说明 / 设置
-   · 文案中立，面向任何使用方（不出现特定产品名）
-   · 去掉自检等开发者向入口
+  設計原則（主人要求「弄得簡單一點，不需要明確標明是 DSH 專屬的」）：
+   · 四個卡片，一眼看完：狀態 / 模型 / 使用說明 / 設定
+   · 文案中立，面向任何使用方（不出現特定產品名）
+   · 去掉自檢等開發者向入口
 -->
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
@@ -35,7 +35,7 @@
             android:textColor="@color/text_secondary"
             android:textSize="13sp" />
 
-        <!-- ① 状态 -->
+        <!-- ① 狀態 -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -69,7 +69,7 @@
                 android:textSize="13sp" />
         </LinearLayout>
 
-        <!-- ①.5 可用性检测（v0.3.0）：一键验证四层链路，并给出可操作的下一步 -->
+        <!-- ①.5 可用性檢測（v0.3.0）：一鍵驗證四層鏈路，並給出可操作的下一步 -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -94,8 +94,8 @@
                 android:textColor="@color/text_secondary"
                 android:textSize="12sp" />
 
-            <!-- 三个操作改为整行列表项（v0.4.0）：主人反馈三个按钮并排会挤压，
-                 改成扩展中心那种「图标 + 标题 + 副标题 + 箭头」的行，窄屏也不会挤。 -->
+            <!-- 三個操作改為整行列表項（v0.4.0）：主人反饋三個按鈕並排會擠壓，
+                 改成擴充套件中心那種「圖示 + 標題 + 副標題 + 箭頭」的行，窄屏也不會擠。 -->
             <LinearLayout
                 android:id="@+id/rowRunCheck"
                 android:layout_width="match_parent"
@@ -313,7 +313,7 @@
                 android:textSize="20sp" />
         </LinearLayout>
 
-        <!-- ③ 使用说明 -->
+        <!-- ③ 使用說明 -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -340,7 +340,7 @@
                 android:lineSpacingExtra="4dp" />
         </LinearLayout>
 
-        <!-- ④ 设置 -->
+        <!-- ④ 設定 -->
         <LinearLayout
             android:id="@+id/cardSettings"
             android:layout_width="match_parent"

@@ -7,7 +7,7 @@ import android.view.View
 import android.widget.TextView
 import android.widget.Toast
 
-/** 与 DSH Mobile 一致的暗色设计令牌 */
+/** 與 DSH Mobile 一致的暗色設計令牌 */
 object Ui {
 
     const val BG = 0xFF101418.toInt()

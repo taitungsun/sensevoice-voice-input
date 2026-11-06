@@ -3,23 +3,23 @@ package app.dsh.asr
 import android.content.Context
 
 /**
- * 界面语言工具（v0.5.1）。
+ * 介面語言工具（v0.5.1）。
  *
- * ## 为什么不直接用 Locale.getDefault()
- * Android 上 `Locale.getDefault()` 是 JVM 缓存的静态值：系统语言变更、
- * 甚至 `Resources` 配置更新后，它都可能还是旧值。实测把模拟器切到 zh-CN 后，
- * 用 `Locale.getDefault()` 仍解析出 en-US，导致下载源判定错误。
+ * ## 為什麼不直接用 Locale.getDefault()
+ * Android 上 `Locale.getDefault()` 是 JVM 快取的靜態值：系統語言變更、
+ * 甚至 `Resources` 配置更新後，它都可能還是舊值。實測把模擬器切到 zh-CN 後，
+ * 用 `Locale.getDefault()` 仍解析出 en-US，導致下載源判定錯誤。
  *
- * `resources.configuration.locales` 才是**当前应用真实生效**的语言
- * （系统语言变更或 attachBaseContext 包裹后都会同步刷新），故统一从这里读。
+ * `resources.configuration.locales` 才是**當前應用真實生效**的語言
+ * （系統語言變更或 attachBaseContext 包裹後都會同步重新整理），故統一從這裡讀。
  */
 object LocaleHelper {
 
     /**
-     * 当前生效语言的 BCP-47 标签（如 `zh-CN` / `en-US`）。
+     * 當前生效語言的 BCP-47 標籤（如 `zh-CN` / `en-US`）。
      *
-     * 兼容两种读法：API 24+ 用 `configuration.locales`（有序列表，取首个），
-     * 更老的回退到已废弃的 `configuration.locale`。
+     * 相容兩種讀法：API 24+ 用 `configuration.locales`（有序列表，取首個），
+     * 更老的回退到已廢棄的 `configuration.locale`。
      */
     fun langTag(context: Context): String {
         val cfg = context.resources.configuration

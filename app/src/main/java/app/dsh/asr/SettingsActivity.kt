@@ -11,8 +11,8 @@ import android.widget.TextView
 import java.util.Locale
 
 /**
- * 识别设置。
- * 同时作为系统「语音输入 → 识别服务 → 设置」的入口（manifest 里 settingsActivity 指向本页）。
+ * 識別設定。
+ * 同時作為系統「語音輸入 → 識別服務 → 設定」的入口（manifest 裡 settingsActivity 指向本頁）。
  */
 class SettingsActivity : Activity() {
 
@@ -59,12 +59,12 @@ class SettingsActivity : Activity() {
                     append(ModelCatalog.human(model.totalBytes))
                     append(
                         when (state) {
-                            ModelState.READY -> " · 已就绪"
+                            ModelState.READY -> " · 已就緒"
                             ModelState.PARTIAL -> " · 未完成"
-                            ModelState.MISSING -> " · 未下载"
+                            ModelState.MISSING -> " · 未下載"
                         },
                     )
-                    if (model.recommended) append(" · 推荐")
+                    if (model.recommended) append(" · 推薦")
                 }
                 textSize = 14f
                 setTextColor(if (state == ModelState.READY) Ui.TEXT else Ui.TEXT_DIM)
@@ -80,7 +80,7 @@ class SettingsActivity : Activity() {
         }
     }
 
-    // ------------------------------------------------------------------ 语言
+    // ------------------------------------------------------------------ 語言
 
     private fun buildLanguage() {
         val rg = findViewById<RadioGroup>(R.id.rgLang)
@@ -99,14 +99,14 @@ class SettingsActivity : Activity() {
         }
     }
 
-    // ------------------------------------------------------------------ 下载源
+    // ------------------------------------------------------------------ 下載源
 
     /**
-     * 模型下载源（v0.5.0）。
+     * 模型下載源（v0.5.0）。
      *
-     * 默认「自动」= 跟随界面语言（中文→国内镜像，其它→HuggingFace 官方），
-     * 主人要求「英文环境下切换到国外源下载」即由此实现；
-     * 也可手动锁定某一源，覆盖语言推断。
+     * 預設「自動」= 跟隨介面語言（中文→國內映象，其它→HuggingFace 官方），
+     * 主人要求「英文環境下切換到國外源下載」即由此實現；
+     * 也可手動鎖定某一源，覆蓋語言推斷。
      */
     private fun buildSource() {
         val rg = findViewById<RadioGroup>(R.id.rgSource)
@@ -119,13 +119,13 @@ class SettingsActivity : Activity() {
             prefs.modelSourceOverride = when (checkedId) {
                 R.id.rbSourceMirror -> ModelCatalog.Source.MIRROR.name
                 R.id.rbSourceOfficial -> ModelCatalog.Source.OFFICIAL.name
-                else -> ""   // 空 = 自动（跟随语言）
+                else -> ""   // 空 = 自動（跟隨語言）
             }
             buildServiceInfo()
         }
     }
 
-    // ------------------------------------------------------------------ 流式 / 端点
+    // ------------------------------------------------------------------ 流式 / 端點
 
     private fun buildStreamingAndEndpoints() {
         val sw = findViewById<Switch>(R.id.swStreaming)
@@ -178,7 +178,7 @@ class SettingsActivity : Activity() {
         })
     }
 
-    // ------------------------------------------------------------------ 服务信息
+    // ------------------------------------------------------------------ 服務資訊
 
     private fun buildServiceInfo() {
         val ready = store.readyModels()
@@ -193,7 +193,7 @@ class SettingsActivity : Activity() {
             append(
                 getString(
                     R.string.settings_models_ready,
-                    if (ready.isEmpty()) "无" else ready.joinToString("、") { it.name },
+                    if (ready.isEmpty()) "無" else ready.joinToString("、") { it.name },
                 ),
             )
             append('\n')

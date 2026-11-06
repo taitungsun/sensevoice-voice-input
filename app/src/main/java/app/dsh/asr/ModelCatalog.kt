@@ -1,19 +1,19 @@
 package app.dsh.asr
 
 /**
- * 模型文件：文件名 + hf-mirror 上的**精确字节数**（实测 Content-Length）。
- * 下载完成后按此校验，防止半截/被篡改的文件进入推理。
+ * 模型檔案：檔名 + hf-mirror 上的**精確位元組數**（實測 Content-Length）。
+ * 下載完成後按此校驗，防止半截/被篡改的檔案進入推理。
  */
 data class ModelFile(val name: String, val bytes: Long)
 
 enum class ModelKind {
-    /** SenseVoice：非流式、多语种、带标点 */
+    /** SenseVoice：非流式、多語種、帶標點 */
     SENSE_VOICE,
 
-    /** Paraformer：非流式、中文、带时间戳 */
+    /** Paraformer：非流式、中文、帶時間戳 */
     PARAFORMER,
 
-    /** 流式 zipformer transducer：边说边出字 */
+    /** 流式 zipformer transducer：邊說邊出字 */
     STREAMING_TRANSDUCER,
 }
 
@@ -33,21 +33,21 @@ data class AsrModel(
 
 object ModelCatalog {
 
-    /** 国内可直连的镜像（hf-mirror.com）。下载 URL 形如 <base>/<repo>/resolve/main/<file> */
+    /** 國內可直連的映象（hf-mirror.com）。下載 URL 形如 <base>/<repo>/resolve/main/<file> */
     const val MIRROR = "https://hf-mirror.com"
 
-    /** HuggingFace 官方源（境外网络环境下更快） */
+    /** HuggingFace 官方源（境外網路環境下更快） */
     const val OFFICIAL = "https://huggingface.co"
 
     /**
-     * 下载源（v0.5.0）。
+     * 下載源（v0.5.0）。
      *
-     * 主人要求「英文环境下切换到国外源下载」——
-     * 国内镜像对境外用户反而慢/不可达，官方源则相反。
-     * 所以**按界面语言自动选**，同时允许用户在设置里手动覆盖。
+     * 主人要求「英文環境下切換到國外源下載」——
+     * 國內映象對境外使用者反而慢/不可達，官方源則相反。
+     * 所以**按介面語言自動選**，同時允許使用者在設定裡手動覆蓋。
      */
     enum class Source(val base: String) {
-        /** 国内镜像 hf-mirror.com */
+        /** 國內映象 hf-mirror.com */
         MIRROR(ModelCatalog.MIRROR),
 
         /** HuggingFace 官方 */
@@ -55,23 +55,26 @@ object ModelCatalog {
     }
 
     /**
-     * 按语言代码决定默认源：中文 → 国内镜像，其它 → 官方。
+     * 按語言程式碼決定預設源：中文 → 國內映象，其它 → 官方。
      *
-     * 判据用语言标签前缀（`zh`），与界面语言切换保持一致：
-     * 用户把应用语言设成中文，多半在国内网络；设成英文，多半在境外。
+     * 判據用語言標籤字首（`zh`），與介面語言切換保持一致：
+     * 使用者把應用語言設成中文，多半在國內網路；設成英文，多半在境外。
      */
     fun defaultSource(langTag: String?): Source {
         val t = langTag?.lowercase().orEmpty()
-        return if (t.startsWith("zh")) Source.MIRROR else Source.OFFICIAL
+        // Fork: only Simplified-Chinese locales use the mainland mirror;
+        // zh-TW / zh-HK / zh-MO / zh-Hant download from HuggingFace directly.
+        val traditional = Regex("^zh[-_](tw|hk|mo|hant)").containsMatchIn(t)
+        return if (t.startsWith("zh") && !traditional) Source.MIRROR else Source.OFFICIAL
     }
 
-    /** 解析源基址：空/非法值回退到官方（英文默认），保证永远有可用 URL */
+    /** 解析源基址：空/非法值回退到官方（英文預設），保證永遠有可用 URL */
     fun sourceFrom(name: String?): Source =
         Source.entries.firstOrNull { it.name == name } ?: Source.OFFICIAL
 
     /**
-     * 构造下载 URL。
-     * @param source 下载源（由 Prefs 提供，见 `Prefs.modelSource`）
+     * 構造下載 URL。
+     * @param source 下載源（由 Prefs 提供，見 `Prefs.modelSource`）
      */
     fun url(model: AsrModel, file: ModelFile, source: Source = Source.MIRROR): String =
         "${source.base}/${model.repo}/resolve/main/${file.name}"
@@ -80,8 +83,8 @@ object ModelCatalog {
         AsrModel(
             id = "sensevoice-small-int8",
             name = "SenseVoice Small",
-            langs = "中 · 英 · 日 · 韩 · 粤",
-            note = "官方推荐：识别质量最好，自动加标点，支持中英混说",
+            langs = "中 · 英 · 日 · 韓 · 粵",
+            note = "官方推薦：辨識品質最好，自動加標點，支援中英混說",
             repo = "csukuangfj/sherpa-onnx-sense-voice-zh-en-ja-ko-yue-2024-07-17",
             kind = ModelKind.SENSE_VOICE,
             files = listOf(
@@ -90,11 +93,25 @@ object ModelCatalog {
             ),
             recommended = true,
         ),
+        // Fork: the 2025-09-09 sherpa-onnx export is SenseVoice Small fine-tuned
+        // on Cantonese (ASLP-lab WSYue-ASR, WenetSpeech-Yue).
+        AsrModel(
+            id = "sensevoice-small-yue-int8",
+            name = "SenseVoice Small (粵語微調 WSYue)",
+            langs = "中 · 英 · 日 · 韓 · 粵",
+            note = "WenetSpeech-Yue 粵語微調版；華語也可使用",
+            repo = "csukuangfj/sherpa-onnx-sense-voice-zh-en-ja-ko-yue-int8-2025-09-09",
+            kind = ModelKind.SENSE_VOICE,
+            files = listOf(
+                ModelFile("model.int8.onnx", 237_115_547L),
+                ModelFile("tokens.txt", 315_894L),
+            ),
+        ),
         AsrModel(
             id = "paraformer-zh-int8",
             name = "Paraformer 中文（大）",
             langs = "中",
-            note = "纯中文，长句稳定；体积大",
+            note = "純中文，長句穩定；檔案較大",
             repo = "csukuangfj/sherpa-onnx-paraformer-zh-2024-03-09",
             kind = ModelKind.PARAFORMER,
             files = listOf(
@@ -106,7 +123,7 @@ object ModelCatalog {
             id = "paraformer-zh-small-int8",
             name = "Paraformer 中文（小）",
             langs = "中",
-            note = "轻量中文（82MB），下载快、占用低",
+            note = "輕量中文（82MB），下載快、占用資源少",
             repo = "csukuangfj/sherpa-onnx-paraformer-zh-small-2024-03-09",
             kind = ModelKind.PARAFORMER,
             files = listOf(
@@ -116,9 +133,9 @@ object ModelCatalog {
         ),
         AsrModel(
             id = "zipformer-bilingual-zh-en-int8",
-            name = "流式 Zipformer 中英双语",
+            name = "串流 Zipformer 中英雙語",
             langs = "中 · 英",
-            note = "边说边出字（流式），中英混说",
+            note = "邊說邊出字（串流），中英混說",
             repo = "csukuangfj/sherpa-onnx-streaming-zipformer-bilingual-zh-en-2023-02-20",
             kind = ModelKind.STREAMING_TRANSDUCER,
             files = listOf(
@@ -130,9 +147,9 @@ object ModelCatalog {
         ),
         AsrModel(
             id = "zipformer-zh-14m-int8",
-            name = "流式 Zipformer 中文（轻量）",
+            name = "串流 Zipformer 中文（輕量）",
             langs = "中",
-            note = "25MB 流式中文，秒下；适合先装了验证链路",
+            note = "25MB 串流中文，下載很快；適合先安裝來測試流程",
             repo = "csukuangfj/sherpa-onnx-streaming-zipformer-zh-14M-2023-02-23",
             kind = ModelKind.STREAMING_TRANSDUCER,
             files = listOf(
@@ -144,9 +161,9 @@ object ModelCatalog {
         ),
         AsrModel(
             id = "zipformer-en-20m-int8",
-            name = "流式 Zipformer 英文（轻量）",
+            name = "串流 Zipformer 英文（輕量）",
             langs = "英",
-            note = "44MB 流式英文，纯英文场景更准",
+            note = "44MB 串流英文，純英文情境更準",
             repo = "csukuangfj/sherpa-onnx-streaming-zipformer-en-20M-2023-02-17",
             kind = ModelKind.STREAMING_TRANSDUCER,
             files = listOf(
@@ -160,7 +177,7 @@ object ModelCatalog {
 
     fun byId(id: String?): AsrModel? = MODELS.firstOrNull { it.id == id }
 
-    /** 体积可读化：239.5 MB / 25.4 MB */
+    /** 體積可讀化：239.5 MB / 25.4 MB */
     fun human(bytes: Long): String {
         if (bytes < 1024) return "$bytes B"
         val kb = bytes / 1024.0

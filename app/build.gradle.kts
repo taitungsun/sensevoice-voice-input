@@ -11,26 +11,33 @@ android {
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "app.dsh.asr"
+        // Fork: own package ID so it can be installed next to upstream app.dsh.asr.
+        applicationId = "io.github.taitungsun.sensevoice"
         minSdk = 26
         // targetSdk 28 —— 与 dsh-android 保持一致（sideload 分发策略）
         targetSdk = 28
-        versionCode = 12
-        versionName = "0.5.2"
+        versionCode = 13
+        versionName = "0.5.2-tw.1"
 
         ndk {
             abiFilters += listOf(targetAbi)
         }
     }
 
-    // release 签名（v0.5.0）：与 DSH Mobile 同一 keystore，方便用户覆盖安装。
-    // 凭据可用 -PksPass= / -PkeyPass= 覆盖，默认值即仓库内 keystore 的口令。
+    // Release signing: keystore and passwords come from Gradle properties or
+    // environment variables (SV_KS_FILE, SV_KS_PASS, SV_KEY_ALIAS, SV_KEY_PASS).
+    // Nothing secret is stored in the repository.
+    fun secret(prop: String, env: String): String? =
+        (project.findProperty(prop) as String?) ?: System.getenv(env)
+    val ksFile = secret("ksFile", "SV_KS_FILE")
     signingConfigs {
         create("release") {
-            storeFile = file("../../dsh-android/keystore/dsh-release.keystore")
-            storePassword = (project.findProperty("ksPass") as String?) ?: "dshmobile2026"
-            keyAlias = "dsh"
-            keyPassword = (project.findProperty("keyPass") as String?) ?: "dshmobile2026"
+            if (ksFile != null) {
+                storeFile = file(ksFile)
+                storePassword = secret("ksPass", "SV_KS_PASS")
+                keyAlias = secret("keyAlias", "SV_KEY_ALIAS") ?: "sensevoice"
+                keyPassword = secret("keyPass", "SV_KEY_PASS")
+            }
         }
     }
 

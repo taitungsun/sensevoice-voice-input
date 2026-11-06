@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- 与 DSH Mobile 暗色规范一致 -->
+    <!-- 與 DSH Mobile 暗色規範一致 -->
     <color name="bg">#FF101418</color>
     <color name="card">#FF171C22</color>
     <color name="card_pressed">#FF1F252C</color>

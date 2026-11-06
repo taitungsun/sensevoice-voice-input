@@ -1,28 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  离线语音识别服务（系统级）。
+  離線語音識別服務（系統級）。
 
-  ## 注册方式照抄成熟开源项目
-  参考 `ElishaAz/Sayboard`（Vosk 语音键盘，活跃项目）的 AndroidManifest：
-  它的 RecognitionService 声明有四个关键点，本文件全部对齐：
-    ① android:exported="true"                     —— 系统要能绑定
-    ② <category android:name="android.intent.category.DEFAULT" />  —— isDefault 标记
-    ③ android:foregroundServiceType="microphone"  —— 录音型前台服务
-    ④ android:permission="android.permission.RECORD_AUDIO"  —— 限定调用方需录音权限
-  另加 QUERY_ALL_PACKAGES：Sayboard 注释明确说明，缺它时**调用方**会收到
-  ERROR_INSUFFICIENT_PERMISSIONS（即便调用方自己有录音权限）。
+  ## 註冊方式照抄成熟開源專案
+  參考 `ElishaAz/Sayboard`（Vosk 語音鍵盤，活躍專案）的 AndroidManifest：
+  它的 RecognitionService 宣告有四個關鍵點，本檔案全部對齊：
+    ① android:exported="true"                     —— 系統要能繫結
+    ② <category android:name="android.intent.category.DEFAULT" />  —— isDefault 標記
+    ③ android:foregroundServiceType="microphone"  —— 錄音型前臺服務
+    ④ android:permission="android.permission.RECORD_AUDIO"  —— 限定呼叫方需錄音許可權
+  另加 QUERY_ALL_PACKAGES：Sayboard 註釋明確說明，缺它時**呼叫方**會收到
+  ERROR_INSUFFICIENT_PERMISSIONS（即便呼叫方自己有錄音許可權）。
 -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <!-- Only used to download a model from HuggingFace (or hf-mirror.com); audio never leaves the phone. -->
     <uses-permission android:name="android.permission.INTERNET" />
-    <!-- 录音型前台服务（识别期间显示状态，避免被系统回收） -->
+    <!-- 錄音型前臺服務（識別期間顯示狀態，避免被系統回收） -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MICROPHONE" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
-    <!-- 参考 Sayboard：识别服务的调用方若无法被查询到，会拿到 ERROR_INSUFFICIENT_PERMISSIONS
-         （即使调用方自己有麦克风权限）。声明此项以确保跨应用调用正常。 -->
+    <!-- F21: start the model keeper after boot -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <!-- F21: buzz when recording starts -->
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <!-- 參考 Sayboard：識別服務的呼叫方若無法被查詢到，會拿到 ERROR_INSUFFICIENT_PERMISSIONS
+         （即使呼叫方自己有麥克風許可權）。宣告此項以確保跨應用呼叫正常。 -->
     <uses-permission
         android:name="android.permission.QUERY_ALL_PACKAGES"
         tools:ignore="QueryAllPackagesPermission" />
@@ -34,11 +39,11 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <!-- 主界面：**不显示桌面图标**（v0.5.0，主人要求改回插件形态）。
-             入口有两个，都不需要 LAUNCHER：
-               · app.dsh.asr.OPEN —— 外部 App（如 DSH Mobile）用自定义 action 拉起
-               · 系统「语音输入 → 识别服务 → 设置」页（recognition_service.xml 引用 SettingsActivity）
-             这样它就是一个纯"系统识别服务提供者"，不占桌面。 -->
+        <!-- 主介面：**不顯示桌面圖示**（v0.5.0，主人要求改回外掛形態）。
+             入口有兩個，都不需要 LAUNCHER：
+               · app.dsh.asr.OPEN —— 外部 App（如 DSH Mobile）用自定義 action 拉起
+               · 系統「語音輸入 → 識別服務 → 設定」頁（recognition_service.xml 引用 SettingsActivity）
+             這樣它就是一個純"系統識別服務提供者"，不佔桌面。 -->
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -47,6 +52,11 @@
                 <action android:name="app.dsh.asr.OPEN" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
+            <!-- Fork: launcher entry so users can open the app to download a model. -->
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
 
         <activity
@@ -54,13 +64,27 @@
             android:exported="false"
             android:label="@string/models_title" />
 
-        <!-- 系统「语音输入 → 识别服务 → 设置」入口（recognition_service.xml 引用） -->
+        <!-- 系統「語音輸入 → 識別服務 → 設定」入口（recognition_service.xml 引用） -->
         <activity
             android:name=".SettingsActivity"
             android:exported="true"
             android:label="@string/settings_title" />
 
-        <!-- 系统识别服务。声明要点见文件顶部注释（对齐 Sayboard）。 -->
+        <!-- F21: keeps the model loaded (see KeeperService.kt) -->
+        <service
+            android:name=".KeeperService"
+            android:exported="false" />
+
+        <receiver
+            android:name=".BootReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+            </intent-filter>
+        </receiver>
+
+        <!-- 系統識別服務。宣告要點見檔案頂部註釋（對齊 Sayboard）。 -->
         <service
             android:name=".AsrRecognitionService"
             android:exported="true"

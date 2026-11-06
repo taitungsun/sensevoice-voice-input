@@ -1,0 +1,26 @@
+sensevoice-voice-input
+Fork of dsh-asr-service (https://github.com/Soodok/dsh-asr-service),
+licensed under the Apache License, Version 2.0 (see LICENSE).
+Changes from upstream are listed in the git history of this repository.
+
+This product includes or uses:
+
+- sherpa-onnx (https://github.com/k2-fsa/sherpa-onnx)
+  Apache License 2.0. The Android library (AAR) is downloaded at build time
+  and is not stored in this repository.
+
+- OpenCC dictionaries (https://github.com/BYVoid/OpenCC)
+  STCharacters.txt, STPhrases.txt, TWPhrases.txt, TWVariants.txt in
+  app/src/main/assets/opencc/. Apache License 2.0.
+
+Speech models are NOT included in this repository or in the APK. The app
+downloads them from HuggingFace on request:
+
+- SenseVoice Small (FunAudioLLM / Alibaba Group), sherpa-onnx export by
+  csukuangfj. Licensed under the FunASR Model Open Source License Agreement:
+  https://github.com/modelscope/FunASR/blob/main/MODEL_LICENSE
+
+- SenseVoice Small fine-tuned on Cantonese, WSYue-ASR
+  (https://huggingface.co/ASLP-lab/WSYue-ASR), sherpa-onnx export by
+  csukuangfj. Apache License 2.0 for the fine-tune; as a derivative of
+  SenseVoice Small it is also subject to the FunASR model license above.
