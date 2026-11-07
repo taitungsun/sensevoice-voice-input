@@ -511,9 +511,9 @@ class CaptureSession(
     }
 
     private fun resultBundle(text: String): android.os.Bundle = android.os.Bundle().apply {
-        // F21: output Traditional Chinese with Taiwan wording (OpenCC s2twp chain).
+        // F21: output Traditional Chinese with Taiwan character forms (OpenCC s2tw chain).
         val out = runCatching { SpokenPunct.englishCase(SpokenPunct.apply(SpokenPunct.dropAutoFinalStop(TwConverter.convert(ctx, text)))) }
-            .onFailure { Log.e(TAG, "s2twp failed", it) }.getOrDefault(text)
+            .onFailure { Log.e(TAG, "s2tw failed", it) }.getOrDefault(text)
         Log.i(TAG, "delivered: $out")
         putStringArrayList(
             android.speech.SpeechRecognizer.RESULTS_RECOGNITION,

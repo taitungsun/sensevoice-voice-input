@@ -4,10 +4,14 @@ import android.content.Context
 import android.util.Log
 
 /**
- * Simplified -> Traditional Chinese with Taiwan wording, the same chain as
- * OpenCC's s2twp: STPhrases + STCharacters, then TWPhrases, then TWVariants.
+ * Simplified -> Traditional Chinese with Taiwan character forms, the same chain
+ * as OpenCC's s2tw: STPhrases + STCharacters, then TWVariants.
  * Each step is a forward maximum-match over the text. Dictionaries come from
  * OpenCC (Apache-2.0) and live in assets/opencc.
+ *
+ * TWPhrases (s2twp's word replacement) is deliberately NOT used: it rewrites
+ * words that are normal in Taiwan too (支持→支援, 程序→程式, 文件→檔案,
+ * 數據→資料), so the user's own words would be changed.
  */
 object TwConverter {
 
@@ -33,12 +37,10 @@ object TwConverter {
         var stMax = 1
         stMax = maxOf(stMax, read(ctx, "opencc/STCharacters.txt", st))
         stMax = maxOf(stMax, read(ctx, "opencc/STPhrases.txt", st))
-        val twp = HashMap<String, String>(1_000)
-        val twpMax = read(ctx, "opencc/TWPhrases.txt", twp)
         val twv = HashMap<String, String>(64)
         val twvMax = read(ctx, "opencc/TWVariants.txt", twv)
         Log.i(TAG, "dictionaries loaded in ${System.currentTimeMillis() - t0} ms")
-        return listOf(Dict(st, stMax), Dict(twp, twpMax), Dict(twv, twvMax))
+        return listOf(Dict(st, stMax), Dict(twv, twvMax))
     }
 
     /** Reads "key<TAB>value [alt ...]" lines; keeps the first value. Returns the longest key length. */

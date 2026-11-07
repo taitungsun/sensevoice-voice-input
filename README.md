@@ -1,12 +1,12 @@
 # sensevoice-voice-input
 
-離線語音輸入服務，使用 SenseVoice 模型，輸出繁體中文（台灣用語）。安裝後成為 Android 系統的語音辨識服務，TT9 等輸入法的語音鍵可以直接使用。語音只在手機上處理，不會上傳。
+離線語音輸入服務，使用 SenseVoice 模型，輸出繁體中文。安裝後成為 Android 系統的語音辨識服務，TT9 等輸入法的語音鍵可以直接使用。語音只在手機上處理，不會上傳。
 
 本專案 fork 自 [Soodok/dsh-asr-service](https://github.com/Soodok/dsh-asr-service)，針對 Qin F21 Pro 這類效能較低的按鍵手機調整，也適用於其他 Android 8.0 以上、arm64 的手機。
 
 ## 與原專案的差異
 
-- 輸出繁體中文，並轉換為台灣用語（例如「列印」「軟體」「影片」）
+- 輸出繁體中文（台灣字形）。一個簡體字對應多個繁體字時，依詞判斷（例如「頭髮」與「發現」、「後來」與「皇后」）。不替換詞彙：說什麼詞就打出什麼詞
 - 口述標點：說「逗號」「句號」「問號」「驚嘆號」「冒號」「分號」「頓號」「刪節號」「換行」會轉成標點符號；英文可說 comma、period、full stop、question mark、exclamation mark、colon、semicolon、new line
 - 不在每句結尾自動加句號（SenseVoice 原本會加），需要時說「句號」即可
 - 模型常駐記憶體：載入一次約需 9 秒（F21 Pro），之後每句不必重新載入。常駐約佔 300 MB 記憶體，待機時不耗 CPU，通知列會顯示「離線語音輸入已就緒」
@@ -93,7 +93,7 @@ bf:f0:94:b6:2c:5f:55:c5:11:fa:5f:af:c0:77:33:54:4a:ed:b3:05:4c:4c:8f:61:33:b1:05
 
 Offline voice input for Android, built on SenseVoice. It registers as the system speech recognition service, so the voice key of keyboards such as TT9 can use it. Audio is processed on the phone and never uploaded.
 
-Forked from [Soodok/dsh-asr-service](https://github.com/Soodok/dsh-asr-service) and tuned for low-end keypad phones such as the Qin F21 Pro (MT6761). Changes: Traditional Chinese output with Taiwan wording, spoken punctuation in Chinese and English, no automatic full stop at the end of each sentence, the model stays loaded in memory (about 300 MB RAM), instant switching between Chinese and English, normal English casing, a short vibration when recording starts, Traditional Chinese UI, and its own package ID.
+Forked from [Soodok/dsh-asr-service](https://github.com/Soodok/dsh-asr-service) and tuned for low-end keypad phones such as the Qin F21 Pro (MT6761). Changes: Traditional Chinese output with Taiwan character forms (words are not replaced), spoken punctuation in Chinese and English, no automatic full stop at the end of each sentence, the model stays loaded in memory (about 300 MB RAM), instant switching between Chinese and English, normal English casing, a short vibration when recording starts, Traditional Chinese UI, and its own package ID.
 
 On the F21 Pro a sentence takes about 1–2 s after you stop speaking, compared with 8–12 s for whisperIME.
 

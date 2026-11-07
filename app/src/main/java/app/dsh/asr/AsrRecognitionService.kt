@@ -31,7 +31,7 @@ class AsrRecognitionService : RecognitionService() {
     override fun onCreate() {
         super.onCreate()
         ensureChannel()
-        // F21: load the s2twp dictionaries in the background so the first result is not delayed.
+        // F21: load the s2tw dictionaries in the background so the first result is not delayed.
         // and make sure the keeper holds the model loaded (it may have been stopped).
         KeeperService.start(applicationContext)
         Log.i(TAG, "service created")
