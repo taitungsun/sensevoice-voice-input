@@ -1,10 +1,10 @@
 # sensevoice-voice-input
 
-離線語音轉文字：辨識全程在手機上完成，語音和文字不會外傳。只有第一次下載模型需要網路。
+離線語音轉文字：辨識全程在手機上完成，語音與文字都不會外傳；只有第一次下載模型時需要網路。
 
-安裝後成為 Android 系統的語音辨識服務，TT9 等輸入法的語音鍵可以直接使用。
+安裝後即成為 Android 的系統語音辨識服務，在 TT9 等輸入法按下語音鍵就能使用。
 
-本專案 fork 自 [Soodok/dsh-asr-service](https://github.com/Soodok/dsh-asr-service)，針對 Qin F21 Pro 這類效能較低的按鍵手機調整，也適用於其他 Android 8.0 以上、arm64 的手機。
+本專案改編自 [Soodok/dsh-asr-service](https://github.com/Soodok/dsh-asr-service)，針對 Qin F21 Pro 等效能較低的按鍵手機最佳化，也適用於 Android 8.0 以上、arm64 架構的手機。
 
 ## 與原專案的差異
 
