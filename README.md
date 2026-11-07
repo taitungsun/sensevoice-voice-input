@@ -8,7 +8,8 @@
 
 - 輸出繁體中文，並轉換為台灣用語（例如「列印」「軟體」「影片」）
 - 口述標點：說「逗號」「句號」「問號」「驚嘆號」「冒號」「分號」「頓號」「刪節號」「換行」會轉成標點符號；英文可說 comma、period、full stop、question mark、exclamation mark、colon、semicolon、new line
-- 模型常駐記憶體：載入一次約需 9 秒（F21 Pro），之後每句不必重新載入。常駐約占 300 MB 記憶體，待機時不耗 CPU，通知列會顯示「離線語音輸入已就緒」
+- 不在每句結尾自動加句號（SenseVoice 原本會加），需要時說「句號」即可
+- 模型常駐記憶體：載入一次約需 9 秒（F21 Pro），之後每句不必重新載入。常駐約佔 300 MB 記憶體，待機時不耗 CPU，通知列會顯示「離線語音輸入已就緒」
 - 中文與英文切換不必重新載入模型；英文輸出改為一般大小寫（原本全為大寫）
 - 開始錄音時短震動，提示可以開始說話
 - 使用 4 個執行緒解碼，錄音期間不做即時預覽，讓結果更快出來
@@ -29,7 +30,7 @@
 1. 從 [Releases](../../releases) 下載 APK 並安裝。
 2. 開啟「SenseVoice 語音輸入」，到「辨識模型」下載 **SenseVoice Small**（239 MB，建議使用 Wi-Fi）。
 3. 授予麥克風權限。
-4. 將本 App 設為系統語音辨識服務：系統設定 → 語言和輸入法 → 語音輸入。若手機沒有這個設定頁，可用 adb：
+4. 將本 App 設為系統語音辨識服務：系統設定 → 語言與輸入設定 → 語音輸入。若手機沒有這個設定頁，可用 adb：
 
    ```
    adb shell settings put secure voice_recognition_service io.github.taitungsun.sensevoice/app.dsh.asr.AsrRecognitionService
@@ -44,6 +45,28 @@
 ```
 adb shell pm disable-user --user 0 org.woheller69.whisper
 ```
+
+## 隱私與權限
+
+辨識全程在手機上進行，語音和文字都不會傳出手機。App 沒有廣告，也不收集或回傳任何使用資料。
+
+| 權限 | 用途 |
+|---|---|
+| 麥克風 | 只在輸入法呼叫語音輸入時錄音 |
+| 網路 | 只用於下載模型；下載完成後可以關閉 App 的網路權限，不影響使用 |
+| 開機啟動、前景服務、通知 | 讓模型常駐記憶體，說完後能快速出字（通知列顯示「離線語音輸入已就緒」） |
+| 震動 | 開始錄音時短震動 |
+| 查詢已安裝的 App（QUERY_ALL_PACKAGES） | Android 要求辨識服務能查詢到呼叫它的輸入法，否則輸入法呼叫時會被拒絕。App 本身只查詢系統上有哪些語音辨識服務、是否安裝 Shizuku（用於狀態顯示與一鍵設定），不記錄也不傳送 |
+
+如果限制了本 App 的背景執行，常駐會被系統關閉，每次說話前都要重新載入模型（約 9 秒）。關閉網路權限沒有這個影響。
+
+Releases 中的 APK 以同一把金鑰簽章，憑證 SHA-256 指紋：
+
+```
+bf:f0:94:b6:2c:5f:55:c5:11:fa:5f:af:c0:77:33:54:4a:ed:b3:05:4c:4c:8f:61:33:b1:05:63:40:86:96:db
+```
+
+可用 `apksigner verify --print-certs <APK 檔案>` 核對。
 
 ## 自行建置
 
@@ -70,10 +93,12 @@ adb shell pm disable-user --user 0 org.woheller69.whisper
 
 Offline voice input for Android, built on SenseVoice. It registers as the system speech recognition service, so the voice key of keyboards such as TT9 can use it. Audio is processed on the phone and never uploaded.
 
-Forked from [Soodok/dsh-asr-service](https://github.com/Soodok/dsh-asr-service) and tuned for low-end keypad phones such as the Qin F21 Pro (MT6761). Changes: Traditional Chinese output with Taiwan wording, spoken punctuation in Chinese and English, the model stays loaded in memory (about 300 MB RAM), instant switching between Chinese and English, normal English casing, a short vibration when recording starts, Traditional Chinese UI, and its own package ID.
+Forked from [Soodok/dsh-asr-service](https://github.com/Soodok/dsh-asr-service) and tuned for low-end keypad phones such as the Qin F21 Pro (MT6761). Changes: Traditional Chinese output with Taiwan wording, spoken punctuation in Chinese and English, no automatic full stop at the end of each sentence, the model stays loaded in memory (about 300 MB RAM), instant switching between Chinese and English, normal English casing, a short vibration when recording starts, Traditional Chinese UI, and its own package ID.
 
 On the F21 Pro a sentence takes about 1–2 s after you stop speaking, compared with 8–12 s for whisperIME.
 
 Install the APK from Releases, open the app, download **SenseVoice Small** (239 MB), grant microphone access, and select the app as the system voice input service (or use the adb command above). If another app with a voice input screen (such as whisperIME) is installed, TT9 opens that app instead, so disable it.
+
+Privacy: recognition runs entirely on the phone; no audio, text or usage data leaves it, and there are no ads or analytics. Network access is used only to download the model and can be turned off afterwards. QUERY_ALL_PACKAGES is needed so that keyboards calling the recognition service are not rejected by Android; the app itself only looks up the installed speech recognition services and whether Shizuku is installed. Keep background running allowed, or the model is unloaded and every utterance waits about 9 s. Release APKs are signed with certificate SHA-256 `bff094b62c5f55c511fa5fafc07733544aedb3054c4c8f6133b10563408696db`.
 
 Code is Apache-2.0. Models are downloaded by the app and are not included; SenseVoice Small is under the FunASR Model License.
