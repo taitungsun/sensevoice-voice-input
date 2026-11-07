@@ -55,7 +55,6 @@ adb shell pm disable-user --user 0 org.woheller69.whisper
 | 網路 | 只用於下載模型；下載完成後可以關閉 App 的網路權限，不影響使用 |
 | 開機啟動、前景服務、通知 | 讓模型常駐記憶體，說完後能快速出字（通知列顯示「離線語音輸入已就緒」） |
 | 震動 | 開始錄音時短震動 |
-| 查詢已安裝的 App（QUERY_ALL_PACKAGES） | Android 要求辨識服務能查詢到呼叫它的輸入法，否則輸入法呼叫時會被拒絕。App 本身只查詢系統上有哪些語音辨識服務、是否安裝 Shizuku（用於狀態顯示與一鍵設定），不記錄也不傳送 |
 
 如果限制了本 App 的背景執行，常駐會被系統關閉，每次說話前都要重新載入模型（約 9 秒）。關閉網路權限沒有這個影響。
 
@@ -98,6 +97,6 @@ On the F21 Pro a sentence takes about 1–2 s after you stop speaking, compared 
 
 Install the APK from Releases, open the app, download **SenseVoice Small** (239 MB), grant microphone access, and select the app as the system voice input service (or use the adb command above). If another app with a voice input screen (such as whisperIME) is installed, TT9 opens that app instead, so disable it.
 
-Privacy: recognition runs entirely on the phone; no audio, text or usage data leaves it, and there are no ads or analytics. Network access is used only to download the model and can be turned off afterwards. QUERY_ALL_PACKAGES is needed so that keyboards calling the recognition service are not rejected by Android; the app itself only looks up the installed speech recognition services and whether Shizuku is installed. Keep background running allowed, or the model is unloaded and every utterance waits about 9 s. Release APKs are signed with certificate SHA-256 `bff094b62c5f55c511fa5fafc07733544aedb3054c4c8f6133b10563408696db`.
+Privacy: recognition runs entirely on the phone; no audio, text or usage data leaves it, and there are no ads or analytics. Network access is used only to download the model and can be turned off afterwards. Keep background running allowed, or the model is unloaded and every utterance waits about 9 s. Release APKs are signed with certificate SHA-256 `bff094b62c5f55c511fa5fafc07733544aedb3054c4c8f6133b10563408696db`.
 
 Code is Apache-2.0. Models are downloaded by the app and are not included; SenseVoice Small is under the FunASR Model License.

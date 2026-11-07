@@ -9,8 +9,9 @@
     ② <category android:name="android.intent.category.DEFAULT" />  —— isDefault 標記
     ③ android:foregroundServiceType="microphone"  —— 錄音型前景服務
     ④ android:permission="android.permission.RECORD_AUDIO"  —— 限定呼叫方需錄音權限
-  另加 QUERY_ALL_PACKAGES：Sayboard 註解明確說明，缺它時**呼叫方**會收到
-  ERROR_INSUFFICIENT_PERMISSIONS（即便呼叫方自己有錄音權限）。
+  Sayboard 另宣告 QUERY_ALL_PACKAGES，以免呼叫方收到 ERROR_INSUFFICIENT_PERMISSIONS。
+  本版已移除：targetSdk 28 不受 Android 11 的 App 可見性限制，宣告與否行為相同。
+  若日後把 targetSdk 提高到 30 以上，需改用範圍較小的 <queries> 宣告並重新測試。
 -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
@@ -26,12 +27,6 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <!-- F21: buzz when recording starts -->
     <uses-permission android:name="android.permission.VIBRATE" />
-    <!-- 參考 Sayboard：辨識服務的呼叫方若無法被查詢到，會拿到 ERROR_INSUFFICIENT_PERMISSIONS
-         （即使呼叫方自己有麥克風權限）。宣告此項以確保跨 App 呼叫正常。 -->
-    <uses-permission
-        android:name="android.permission.QUERY_ALL_PACKAGES"
-        tools:ignore="QueryAllPackagesPermission" />
-
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
