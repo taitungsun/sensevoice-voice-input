@@ -7,93 +7,58 @@
     <string name="channel_listening_desc">正在使用麥克風進行離線辨識</string>
     <string name="channel_model">模型提醒</string>
     <string name="notif_listening_title">正在離線辨識</string>
-    <string name="notif_listening_text">引擎：%1$s（音訊不出本機）</string>
+    <string name="notif_listening_text">引擎：%1$s（語音不離開手機）</string>
     <string name="notif_nomodel_title">離線辨識模型未就緒</string>
-    <string name="notif_nomodel_text">點選進入模型管理，下載任一模型即可使用</string>
+    <string name="notif_nomodel_text">點選進入模型管理，下載模型後即可使用</string>
 
     <string name="main_title">離線語音辨識</string>
-    <string name="main_subtitle">為系統提供本機辨識能力 · 錄音不出本機</string>
-        <string name="card_models">辨識模型</string>
+    <string name="main_subtitle">離線語音轉文字 · 語音不離開手機</string>
+    <string name="card_status">狀態</string>
+    <string name="card_models">辨識模型</string>
     <string name="card_models_sub">下載或管理離線模型</string>
     <string name="card_usage">使用說明</string>
     <string name="card_settings">辨識設定</string>
-    <string name="card_settings_sub">語言、串流辨識、預設模型</string>
+    <string name="card_settings_sub">辨識語言、錄音時間</string>
     <string name="card_check">可用性檢查</string>
-            <string name="set_via_shizuku">正在透過 Shizuku 設定…</string>
-    <string name="set_requesting_shizuku">正在要求 Shizuku 權限…</string>
-    <string name="set_shizuku_denied">Shizuku 權限被拒絕，改用其他方式…</string>
-    <string name="set_shizuku_failed">Shizuku 設定失敗，可改用「呼叫端指定服務」</string>
-    <string name="set_no_shizuku">未偵測到 Shizuku，嘗試其他方式…</string>
-    <string name="set_all_failed">無法自動設定（系統限制）。請在呼叫端 App 內直接指定本服務，或安裝 Shizuku 後重試。</string>
-<string name="row_check_sub">檢查服務、模型與整體流程是否正常</string>
-    <string name="row_default_sub">讓其他 App 自動使用本服務</string>
-    <string name="row_settings_sub">到系統設定手動選擇辨識服務</string>
-<string name="check_hint">點一下就能確認是否可用；有問題會告訴你怎麼處理。</string>
+    <string name="row_check_sub">檢查服務、模型與整體流程是否正常</string>
+    <string name="row_settings_sub">到系統設定選擇本 App 為語音輸入服務</string>
+    <string name="check_hint">點一下就能確認是否可用；有問題會告訴你怎麼處理。</string>
     <string name="btn_run_check">開始檢查</string>
-    <string name="btn_set_default">設為系統預設</string>
     <string name="btn_open_settings">開啟系統設定</string>
     <string name="check_running">正在檢查…</string>
-    <string name="check_set_ok">已設為系統預設辨識服務 ✓</string>
-    <string name="check_set_fail">無法自動設定（系統限制）。請到系統設定裡手動選擇，或在呼叫端 App 內指定本服務。</string>
-    <string name="check_open_fail">沒找到系統設定入口。可手動前往：系統設定 → 語言和輸入法 → 語音輸入</string>
-<string name="card_status">狀態</string>
-    <string name="card_actions">操作</string>
-    <string name="card_selftest">自我檢查</string>
-    <string name="btn_system_settings">開啟系統「語音輸入」設定</string>
-    <string name="btn_models">模型管理</string>
-    <string name="btn_settings">辨識設定</string>
-    <string name="btn_service_test">服務自我檢查（透過 SpeechRecognizer 綁定）</string>
-    <string name="btn_wav_test">引擎自我檢查（讀取 asr_test.wav 解碼）</string>
+    <string name="check_open_fail">沒找到系統設定入口。可手動前往：系統設定 → 語言與輸入設定 → 語音輸入</string>
     <string name="main_footer">用法：
-1. 先到「模型」下載一個模型
-2. 開啟系統設定 → 語言和輸入法 → 語音輸入，選擇本 App
-3. 其他 App 透過標準語音辨識介面即可呼叫
-
-若系統設定裡找不到本 App，可在呼叫端 App 內直接指定本辨識服務。</string>
+1. 先到「辨識模型」下載模型
+2. 開啟系統設定 → 語言與輸入設定 → 語音輸入，選擇本 App
+3. 在輸入法（例如 TT9）按語音鍵即可使用</string>
 
     <string name="models_title">模型管理</string>
-    <string name="models_subtitle">來自 HuggingFace（簡體中文系統使用中國鏡像站，其他使用官方來源），下載後依檔案大小驗證</string>
+    <string name="models_subtitle">從 HuggingFace 下載，下載後依檔案大小驗證</string>
     <string name="models_dir">儲存目錄：%1$s</string>
     <string name="btn_download">下載</string>
     <string name="btn_cancel">取消</string>
     <string name="btn_delete">刪除</string>
-    <string name="btn_use">設為預設</string>
     <string name="state_ready">已就緒</string>
-    <string name="state_partial">未完成</string>
     <string name="state_missing">未下載</string>
-    <string name="label_default">預設</string>
-    <string name="label_streaming">串流</string>
-    <string name="label_offline">離線整句</string>
+    <string name="label_offline">離線整句辨識</string>
     <string name="toast_download_done">%1$s 下載完成並通過驗證</string>
     <string name="toast_download_failed">下載失敗：%1$s</string>
     <string name="toast_deleted">已刪除 %1$s</string>
-    <string name="toast_no_permission">刪除失敗，請再試一次</string>
 
     <string name="settings_title">辨識設定</string>
-    <string name="settings_default_model">預設模型</string>
-    <string name="settings_default_model_hint">未下載的模型會灰色顯示，先到「模型管理」下載</string>
     <string name="settings_language">辨識語言</string>
-    <string name="lang_auto">自動（跟隨呼叫端）</string>
+    <string name="lang_auto">自動（跟隨輸入法）</string>
     <string name="lang_zh">中文</string>
     <string name="lang_en">英文</string>
-    <!-- 模型下載源（v0.5.0）：預設跟隨介面語言，可手動覆蓋 -->
-    <string name="settings_source">模型下載來源</string>
-    <string name="settings_source_hint">預設依系統語言：簡體中文使用中國鏡像站，其他語言使用 HuggingFace 官方來源。</string>
-    <string name="source_auto">自動（依系統語言）</string>
-    <string name="source_mirror">中國鏡像站 hf-mirror.com</string>
-    <string name="source_official">HuggingFace 官方來源 huggingface.co</string>
-    <string name="settings_streaming">優先使用串流模型</string>
-    <string name="settings_streaming_hint">串流模型邊說邊出字；關閉則優先使用非串流（整句更準）</string>
-    <string name="settings_silence">靜音判定：%1$s s</string>
-    <string name="settings_silence_hint">說完後靜音超過該時長即認為一句結束</string>
-    <string name="settings_maxlen">單句最長：%1$s s</string>
-    <string name="settings_nospeech">未偵測到語音逾時：%1$s s</string>
+    <string name="settings_silence">靜音判定：%1$s 秒</string>
+    <string name="settings_silence_hint">說完後靜音超過這個時間，就當作一句話結束</string>
+    <string name="settings_maxlen">單句最長：%1$s 秒</string>
+    <string name="settings_nospeech">未偵測到語音逾時：%1$s 秒</string>
     <string name="settings_service_info">服務資訊</string>
-    <string name="settings_engine">推理引擎：sherpa-onnx 1.13.8（本機）</string>
+    <string name="settings_engine">辨識引擎：sherpa-onnx 1.13.8（本機）</string>
     <string name="settings_component">服務元件：%1$s</string>
-    <string name="settings_default_model_line">預設模型：%1$s</string>
+    <string name="settings_default_model_line">使用模型：%1$s</string>
     <string name="settings_models_ready">已就緒模型：%1$s</string>
     <string name="settings_models_used">已佔用空間：%1$s</string>
-    <string name="settings_source_line">下載來源：%1$s</string>
     <string name="btn_open_models">去下載模型</string>
 </resources>

@@ -20,7 +20,3 @@ downloads them from HuggingFace on request:
   csukuangfj. Licensed under the FunASR Model Open Source License Agreement:
   https://github.com/modelscope/FunASR/blob/main/MODEL_LICENSE
 
-- SenseVoice Small fine-tuned on Cantonese, WSYue-ASR
-  (https://huggingface.co/ASLP-lab/WSYue-ASR), sherpa-onnx export by
-  csukuangfj. Apache License 2.0 for the fine-tune; as a derivative of
-  SenseVoice Small it is also subject to the FunASR model license above.

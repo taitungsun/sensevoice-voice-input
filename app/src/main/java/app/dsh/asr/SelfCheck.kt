@@ -11,7 +11,6 @@ import android.provider.Settings
 import android.speech.RecognitionListener
 import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
-import android.util.Log
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 
@@ -34,8 +33,6 @@ import java.util.concurrent.TimeUnit
  * 逾時/錯誤也能區分是哪一環（如 ERROR_CLIENT = 綁定失敗、ERROR_AUDIO = 錄音打不開）。
  */
 object SelfCheck {
-
-    private const val TAG = "SelfCheck"
 
     /** 單項結果 */
     data class Item(
@@ -96,8 +93,8 @@ object SelfCheck {
         items += Item(
             "已設為系統預設辨識服務", isDefault,
             if (isDefault) "其他 App 直接呼叫即可"
-            else "目前是：${current.ifBlank { "未設定" }}。點下方「設為系統預設」一鍵設定；"
-                + "若失敗，表示系統限制較嚴，可在呼叫端 App 裡手動指定本服務",
+            else "目前是：${current.ifBlank { "未設定" }}。點下方「開啟系統設定」手動選擇本服務；"
+                + "找不到設定頁時，可用 README 中的 adb 指令設定",
             warn = !isDefault,
         )
 
@@ -110,15 +107,11 @@ object SelfCheck {
         var modelOk = false
         var modelDetail = ""
         if (target == null) {
-            modelDetail = "還沒有可用的模型，請先到「辨識模型」下載一個（建議先下載最小的）"
+            modelDetail = "還沒有可用的模型，請先到「辨識模型」下載"
         } else {
             modelOk = runCatching {
                 // 真正建立一次辨識器 —— 檔案缺一個就會在這裡失敗
-                if (target.streaming) {
-                    EngineHolder.online(ctx, target)
-                } else {
-                    EngineHolder.offline(ctx, target, prefs.language)
-                }
+                EngineHolder.offline(ctx, target, prefs.language)
                 true
             }.getOrElse {
                 modelDetail = "模型載入失敗：${it.message}（可能下載不完整，請刪除後重新下載）"
@@ -214,42 +207,6 @@ object SelfCheck {
     }
 
     const val ACTION_RECOGNITION_SERVICE = "android.speech.RecognitionService"
-
-    /**
-     * 嘗試把本 App 設為系統預設辨識服務。
-     *
-     * 一般 App **沒有** `WRITE_SECURE_SETTINGS` 權限，正常寫不了這個鍵。
-     * 三條路徑，按成功率排序：
-     *  ① 直接寫（已 root / 有權限時可用）
-     *  ② 用 root 寫（`su -c settings put`）
-     *  ③ 都不行 → 傳回 false，由介面引導使用者去系統設定（或改用呼叫方指定服務）
-     *
-     * @return 是否設定成功
-     */
-    fun trySetAsDefault(ctx: Context): Boolean {
-        val spec = "${ctx.packageName}/${AsrRecognitionService::class.java.name}"
-        // ① 直接寫
-        val direct = runCatching {
-            Settings.Secure.putString(ctx.contentResolver, "voice_recognition_service", spec)
-        }.isSuccess && isDefaultNow(ctx)
-        if (direct) return true
-
-        // ② root
-        val rooted = runCatching {
-            val p = Runtime.getRuntime().exec(arrayOf("su", "-c", "settings put secure voice_recognition_service $spec"))
-            p.waitFor(4, TimeUnit.SECONDS)
-            p.exitValue() == 0
-        }.getOrDefault(false) && isDefaultNow(ctx)
-        if (rooted) return true
-
-        Log.w(TAG, "cannot set default service without WRITE_SECURE_SETTINGS or root")
-        return false
-    }
-
-    private fun isDefaultNow(ctx: Context): Boolean = runCatching {
-        Settings.Secure.getString(ctx.contentResolver, "voice_recognition_service")
-            .orEmpty().startsWith(ctx.packageName)
-    }.getOrDefault(false)
 
     /**
      * 開啟系統「語音輸入」設定頁 —— **多路徑備援**。

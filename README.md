@@ -13,8 +13,8 @@
 - 中文與英文切換不必重新載入模型；英文輸出改為一般大小寫（原本全為大寫）
 - 開始錄音時短震動，提示可以開始說話
 - 使用 4 個執行緒解碼，錄音期間不做即時預覽，讓結果更快出來
-- 預設模型為官方原版 SenseVoice Small（2024-07-17）；另可選粵語微調版（WSYue）
-- 系統語言為繁體中文時，直接從 HuggingFace 下載模型（不使用中國鏡像站）
+- 只使用官方原版 SenseVoice Small（2024-07-17），一律從 HuggingFace 下載
+- 移除用不到的功能：其他辨識模型（Paraformer、串流模型、粵語微調版）、中國鏡像站下載、Shizuku／root 一鍵設定
 - 獨立的套件名稱 `io.github.taitungsun.sensevoice`，可與原專案同時安裝
 
 ## 實測速度（Qin F21 Pro，MT6761）
@@ -51,10 +51,11 @@ adb shell pm disable-user --user 0 org.woheller69.whisper
 
 | 權限 | 用途 |
 |---|---|
-| 麥克風 | 只在輸入法呼叫語音輸入時錄音 |
-| 網路 | 只用於下載模型；下載完成後可以關閉 App 的網路權限，不影響使用 |
-| 開機啟動、前景服務、通知 | 讓模型常駐記憶體，說完後能快速出字（通知列顯示「離線語音輸入已就緒」） |
-| 震動 | 開始錄音時短震動 |
+| 麥克風 | 語音輸入時使用 |
+| 網路 | 用於下載 SenseVoice 語音模型；下載完成後可關閉 App 的網路權限，不影響使用 |
+| 開機啟動 | 開機後自動載入模型，第一次說話不必等待 |
+| 前景服務 | 讓模型常駐記憶體，說完後能快速出字 |
+| 通知 | 前景服務依規定須顯示通知（通知列的「離線語音輸入已就緒」） |
 
 如果限制了本 App 的背景執行，常駐會被系統關閉，每次說話前都要重新載入模型（約 9 秒）。關閉網路權限沒有這個影響。
 
@@ -83,20 +84,77 @@ bf:f0:94:b6:2c:5f:55:c5:11:fa:5f:af:c0:77:33:54:4a:ed:b3:05:4c:4c:8f:61:33:b1:05
 - 辨識引擎：[sherpa-onnx](https://github.com/k2-fsa/sherpa-onnx)（Apache-2.0）
 - 繁簡轉換字典：[OpenCC](https://github.com/BYVoid/OpenCC)（Apache-2.0）
 
-語音模型不包含在本專案與 APK 中，由 App 從 HuggingFace 下載。SenseVoice Small 由 FunAudioLLM（阿里巴巴集團）釋出，採用 [FunASR Model License](https://github.com/modelscope/FunASR/blob/main/MODEL_LICENSE)；粵語微調版來自 [ASLP-lab/WSYue-ASR](https://huggingface.co/ASLP-lab/WSYue-ASR)。
+語音模型不包含在本專案與 APK 中，由 App 從 HuggingFace 下載。SenseVoice Small 由 FunAudioLLM（阿里巴巴集團）釋出，採用 [FunASR Model License](https://github.com/modelscope/FunASR/blob/main/MODEL_LICENSE)。
 
 ---
 
 ## English
 
-Offline voice input for Android, built on SenseVoice. It registers as the system speech recognition service, so the voice key of keyboards such as TT9 can use it. Audio is processed on the phone and never uploaded.
+Offline speech-to-text: recognition runs entirely on the phone, and neither audio nor text ever leaves it. The network is needed only once, to download the model. After installation the app becomes Android's system speech recognition service, so you can dictate by pressing the voice key of a keyboard such as TT9. Speak Mandarin and get Traditional Chinese text, or speak English.
 
-Forked from [Soodok/dsh-asr-service](https://github.com/Soodok/dsh-asr-service) and tuned for low-end keypad phones such as the Qin F21 Pro (MT6761). Changes: Traditional Chinese output with Taiwan character forms (words are not replaced), spoken punctuation in Chinese and English, no automatic full stop at the end of each sentence, the model stays loaded in memory (about 300 MB RAM), instant switching between Chinese and English, normal English casing, a short vibration when recording starts, and its own package ID.
+Forked from [Soodok/dsh-asr-service](https://github.com/Soodok/dsh-asr-service) and optimized for low-end keypad phones such as the Qin F21 Pro. It also works on other arm64 phones with Android 8.0 or later. The app's own screens are in Traditional Chinese.
 
-On the F21 Pro a sentence takes about 1–2 s after you stop speaking, compared with 8–12 s for whisperIME.
+### Changes from the original project
 
-Install the APK from Releases, open the app, download **SenseVoice Small** (239 MB), grant microphone access, and select the app as the system voice input service (or use the adb command above). If another app with a voice input screen (such as whisperIME) is installed, TT9 opens that app instead, so disable it.
+- Traditional Chinese output (Taiwan character forms). Your words are kept as spoken, never swapped for other vocabulary
+- Spoken punctuation: say 逗號, 句號, 問號, 驚嘆號, 冒號, 分號, 頓號, 刪節號 or 換行 in Chinese, or comma, period, full stop, question mark, exclamation mark, colon, semicolon or new line in English
+- No automatic full stop at the end of each sentence (SenseVoice adds one); say 句號 or "period" when you want one
+- The model stays loaded in memory: loading takes about 9 s on the F21 Pro, then every sentence is fast. This uses about 300 MB of RAM and no CPU while idle; the notification shows 離線語音輸入已就緒 ("offline voice input ready")
+- Switching between Chinese and English needs no reload; English comes out in normal case instead of all capitals
+- A short vibration when recording starts, so you know when to speak
+- Decoding uses 4 threads and skips live previews while recording, so the result arrives sooner
+- Only the original SenseVoice Small model (2024-07-17), always downloaded from HuggingFace
+- Unneeded features removed: other models (Paraformer, streaming models, the Cantonese fine-tune), the China mirror download, Shizuku/root one-tap setup
+- Its own package ID, `io.github.taitungsun.sensevoice`, so it can be installed next to the original
 
-Privacy: recognition runs entirely on the phone; no audio, text or usage data leaves it, and there are no ads or analytics. Network access is used only to download the model and can be turned off afterwards. Keep background running allowed, or the model is unloaded and every utterance waits about 9 s. Release APKs are signed with certificate SHA-256 `bff094b62c5f55c511fa5fafc07733544aedb3054c4c8f6133b10563408696db`.
+### Speed (Qin F21 Pro, MT6761)
 
-Code is Apache-2.0. Models are downloaded by the app and are not included; SenseVoice Small is under the FunASR Model License.
+| | Wait per sentence |
+|---|---|
+| whisperIME (Whisper base) | about 8–12 s |
+| This project (SenseVoice Small) | about 1–2 s after you stop speaking |
+
+### Installation
+
+1. Download the APK from [Releases](../../releases) and install it.
+2. Open 「SenseVoice 語音輸入」, go to 「辨識模型」 (models) and download **SenseVoice Small** (239 MB; Wi-Fi recommended).
+3. Grant microphone access.
+4. Select the app as the system voice input service: Settings → System → Languages & input → Voice input. If your phone has no such page, use adb:
+
+   ```
+   adb shell settings put secure voice_recognition_service io.github.taitungsun.sensevoice/app.dsh.asr.AsrRecognitionService
+   ```
+
+5. With TT9, the keyboard itself also needs microphone permission.
+
+If another app with its own voice input screen (such as whisperIME) is installed, TT9 opens that app instead of the system service. Disable or remove it:
+
+```
+adb shell pm disable-user --user 0 org.woheller69.whisper
+```
+
+### Privacy and permissions
+
+Recognition runs entirely on the phone; audio and text never leave it. There are no ads, and no usage data is collected or sent.
+
+| Permission | Used for |
+|---|---|
+| Microphone | Voice input |
+| Network | Downloading the SenseVoice model; you can turn off the app's network access afterwards without affecting use |
+| Run at startup | Loading the model after boot, so the first sentence needs no wait |
+| Foreground service | Keeping the model in memory, so text appears quickly |
+| Notifications | Android requires a notification for a foreground service (離線語音輸入已就緒) |
+
+If you restrict the app's background activity, Android stops it and the model must reload (about 9 s) before every sentence. Turning off network access has no such effect.
+
+Release APKs are all signed with the same key. Certificate SHA-256 fingerprint:
+
+```
+bf:f0:94:b6:2c:5f:55:c5:11:fa:5f:af:c0:77:33:54:4a:ed:b3:05:4c:4c:8f:61:33:b1:05:63:40:86:96:db
+```
+
+Check it with `apksigner verify --print-certs <APK file>`.
+
+### License
+
+Code is Apache License 2.0; see [LICENSE](LICENSE) and [NOTICE](NOTICE). The model is not included in this project or the APK; the app downloads it from HuggingFace. SenseVoice Small is released by FunAudioLLM (Alibaba Group) under the [FunASR Model License](https://github.com/modelscope/FunASR/blob/main/MODEL_LICENSE).

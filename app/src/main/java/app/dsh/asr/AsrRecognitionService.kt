@@ -41,8 +41,8 @@ class AsrRecognitionService : RecognitionService() {
         val prefs = Prefs(this)
         val params = parseParams(recognizerIntent, prefs)
         val store = ModelStore(this)
-        val model = ModelPicker.pick(prefs, store, params.langHint)
-        Log.i(TAG, "onStartListening lang=${params.langHint} partials=${params.partialsWanted} model=${model?.id}")
+        val model = ModelPicker.pick(prefs, store)
+        Log.i(TAG, "onStartListening lang=${params.langHint} model=${model?.id}")
 
         if (model == null) {
             // 一個模型都沒下載：明確告訴呼叫方"語言/模型不可用"，並提示使用者去下載
@@ -51,7 +51,7 @@ class AsrRecognitionService : RecognitionService() {
             return
         }
 
-        val langCode = langCodeFor(params.langHint, model)
+        val langCode = params.langHint   // SenseVoice: "zh" / "en" / "auto"
         val newSession = CaptureSession(
             ctx = applicationContext,
             callback = listener,
@@ -135,22 +135,10 @@ class AsrRecognitionService : RecognitionService() {
             ?: prefs.silenceMs
         return RequestParams(
             langHint = hint,
-            partialsWanted = intent?.getBooleanExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, true) ?: true,
-            preferOffline = intent?.getBooleanExtra(RecognizerIntent.EXTRA_PREFER_OFFLINE, true) ?: true,
-            maxResults = intent?.getIntExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 1) ?: 1,
             silenceMs = silence,
             maxUtteranceMs = prefs.maxUtteranceMs,
             noSpeechTimeoutMs = prefs.noSpeechTimeoutMs,
         )
-    }
-
-    private fun langCodeFor(hint: String, model: AsrModel): String = when (model.kind) {
-        ModelKind.SENSE_VOICE -> when (hint) {
-            "zh" -> "zh"
-            "en" -> "en"
-            else -> "auto"
-        }
-        else -> hint
     }
 
     // ------------------------------------------------------------------ 通知
@@ -209,49 +197,13 @@ class AsrRecognitionService : RecognitionService() {
     }
 }
 
-/** 模型選擇策略（v0.4.1 修正優先順序，見 pick 註解） */
+/** 模型選擇：預設模型已下載就用它，否則用第一個已下載的模型。 */
 object ModelPicker {
 
-    /**
-     * 選模型。
-     *
-     * ## 修的是什麼（v0.4.1）
-     * 舊邏輯**只要預設模型語言符合就直接傳回**，於是"使用者把離線模型設成預設" →
-     * 串流偏好被完全跳過 → 辨識不即時（原作者回饋「感覺不夠即時」）。
-     * 實測記錄佐證：`model=paraformer-zh-small-int8`（離線）而非串流 zipformer。
-     *
-     * ## 新優先順序
-     *  ① 預設模型**本身就是串流** → 用它（尊重使用者明確選擇）
-     *  ② 開啟了"串流優先" → 語言符合的串流模型優先（即時性優先）
-     *  ③ 預設模型（語言符合）→ ④ 推薦 → 第一個
-     */
-    fun pick(prefs: Prefs, store: ModelStore, langHint: String): AsrModel? {
+    fun pick(prefs: Prefs, store: ModelStore): AsrModel? {
         val ready = store.readyModels()
         if (ready.isEmpty()) return null
-        val preferred = prefs.defaultModel()?.takeIf { m -> ready.any { it.id == m.id } }
-
-        // ① 預設模型就是串流 → 直接用
-        if (preferred != null && preferred.streaming &&
-            (langHint == "auto" || matches(preferred, langHint))
-        ) return preferred
-
-        // ② 開了串流優先 → 語言符合的串流模型優先（解決"不即時"）
-        if (prefs.preferStreaming) {
-            val pool = ready.filter { matches(it, langHint) }.ifEmpty { ready }
-            pool.firstOrNull { it.streaming }?.let { return it }
-        }
-
-        // ③ 預設模型（語言符合）
-        if (preferred != null && (langHint == "auto" || matches(preferred, langHint))) return preferred
-        val langPool = ready.filter { matches(it, langHint) }.ifEmpty { ready }
-        if (preferred != null && langPool.any { it.id == preferred.id }) return preferred
-        return langPool.firstOrNull { it.recommended } ?: langPool.first()
-    }
-
-    fun matches(model: AsrModel, langHint: String): Boolean = when (langHint) {
-        "zh" -> model.langs.contains("中")
-        "en" -> model.langs.contains("英")
-        else -> true
+        return prefs.defaultModel()?.takeIf { m -> ready.any { it.id == m.id } } ?: ready.first()
     }
 }
 

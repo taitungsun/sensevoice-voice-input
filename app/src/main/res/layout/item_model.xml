@@ -84,20 +84,6 @@
             android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/btnUse"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_weight="1"
-            android:background="@drawable/bg_btn_ghost"
-            android:gravity="center"
-            android:paddingTop="10dp"
-            android:paddingBottom="10dp"
-            android:text="@string/btn_use"
-            android:textColor="@color/text_primary"
-            android:textSize="14sp" />
-
-        <TextView
             android:id="@+id/btnDelete"
             android:layout_width="0dp"
             android:layout_height="wrap_content"

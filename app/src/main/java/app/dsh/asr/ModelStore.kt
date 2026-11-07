@@ -23,17 +23,6 @@ class ModelStore(context: Context) {
 
     private val appCtx = context.applicationContext
 
-    /**
-     * 目前生效的下載來源（v0.5.0）。
-     * 按介面語言推斷（中文→hf-mirror，其他→HuggingFace 官方），設定頁可手動覆蓋。
-     *
-     * ⚠️ 語言必須從 `resources.configuration` 讀，**不能用 `Locale.getDefault()`**：
-     * 後者是 JVM 快取的靜態值，Android 在系統語言變更（或 App 內切換語言）後
-     * 不會更新它 —— 實測把系統切到中文後仍解析成官方來源。
-     */
-    private fun source(): ModelCatalog.Source =
-        Prefs(appCtx).modelSource(LocaleHelper.langTag(appCtx))
-
     val root: File = run {
         val base = appCtx.getExternalFilesDir(null) ?: appCtx.filesDir
         File(base, "models").also { it.mkdirs() }
@@ -137,7 +126,7 @@ class ModelStore(context: Context) {
 
             var conn: HttpURLConnection? = null
             try {
-                val url = URL(ModelCatalog.url(model, file, source()))
+                val url = URL(ModelCatalog.url(model, file))
                 conn = (url.openConnection() as HttpURLConnection).apply {
                     connectTimeout = 20_000
                     readTimeout = 30_000

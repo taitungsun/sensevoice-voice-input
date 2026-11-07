@@ -63,10 +63,4 @@ android {
 
 dependencies {
     implementation(files("libs/sherpa-onnx-1.13.8.aar"))
-    // Shizuku（v0.4.0）：用於「一鍵設為系統預設辨識服務」——
-    // 一般 App 沒有 WRITE_SECURE_SETTINGS，但 Shizuku 能以 adb(uid 2000) 身分
-    // 執行 `settings put secure voice_recognition_service ...`，自動完成設定。
-    implementation("dev.rikka.shizuku:api:13.1.5")
-    implementation("dev.rikka.shizuku:provider:13.1.5")
-    implementation("dev.rikka.shizuku:aidl:13.1.5")
 }

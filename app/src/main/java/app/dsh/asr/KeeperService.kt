@@ -64,8 +64,8 @@ class KeeperService : Service() {
             warming = true
             Thread({
                 try {
-                    val model = ModelPicker.pick(Prefs(ctx), ModelStore(ctx), "zh")
-                    if (model != null && !model.streaming) {
+                    val model = ModelPicker.pick(Prefs(ctx), ModelStore(ctx))
+                    if (model != null) {
                         EngineHolder.offline(ctx, model, "zh")
                         TwConverter.convert(ctx, "預熱")
                         Log.i(TAG, "model warm: ${model.id}")

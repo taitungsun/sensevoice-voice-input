@@ -17,7 +17,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
-    <!-- Only used to download a model from HuggingFace (or hf-mirror.com); audio never leaves the phone. -->
+    <!-- Only used to download the model from HuggingFace; audio never leaves the phone. -->
     <uses-permission android:name="android.permission.INTERNET" />
     <!-- 錄音型前景服務（辨識期間顯示狀態，避免被系統回收） -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
@@ -34,20 +34,12 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <!-- 主介面：**不顯示桌面圖示**（v0.5.0，原作者要求改回外掛形式）。
-             入口有兩個，都不需要 LAUNCHER：
-               · app.dsh.asr.OPEN —— 外部 App（如 DSH Mobile）用自訂 action 啟動
-               · 系統「語音輸入 → 辨識服務 → 設定」頁（recognition_service.xml 引用 SettingsActivity）
-             這樣它就是一個純"系統辨識服務提供者"，不佔桌面。 -->
+        <!-- 主介面：從桌面圖示開啟（下載模型、檢查狀態）；
+             系統「語音輸入 → 辨識服務 → 設定」頁則開啟 SettingsActivity。 -->
         <activity
             android:name=".MainActivity"
             android:exported="true"
             android:label="@string/app_name">
-            <intent-filter>
-                <action android:name="app.dsh.asr.OPEN" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-            <!-- Fork: launcher entry so users can open the app to download a model. -->
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

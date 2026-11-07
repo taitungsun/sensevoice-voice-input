@@ -3,10 +3,8 @@ package app.dsh.asr
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.widget.RadioButton
 import android.widget.RadioGroup
 import android.widget.SeekBar
-import android.widget.Switch
 import android.widget.TextView
 import java.util.Locale
 
@@ -26,10 +24,8 @@ class SettingsActivity : Activity() {
         prefs = Prefs(this)
         store = ModelStore(this)
 
-        buildModelList()
         buildLanguage()
-        buildSource()
-        buildStreamingAndEndpoints()
+        buildEndpoints()
         buildServiceInfo()
 
         findViewById<TextView>(R.id.btnOpenModels).setOnClickListener {
@@ -39,45 +35,7 @@ class SettingsActivity : Activity() {
 
     override fun onResume() {
         super.onResume()
-        buildModelList()
         buildServiceInfo()
-    }
-
-    // ------------------------------------------------------------------ 模型
-
-    private fun buildModelList() {
-        val group = findViewById<RadioGroup>(R.id.rgModel)
-        group.removeAllViews()
-        val currentId = prefs.defaultModel()?.id
-        for (model in ModelCatalog.MODELS) {
-            val state = store.state(model)
-            val rb = RadioButton(this).apply {
-                id = ViewIdBase + ModelCatalog.MODELS.indexOf(model)
-                text = buildString {
-                    append(model.name)
-                    append(" · ")
-                    append(ModelCatalog.human(model.totalBytes))
-                    append(
-                        when (state) {
-                            ModelState.READY -> " · 已就緒"
-                            ModelState.PARTIAL -> " · 未完成"
-                            ModelState.MISSING -> " · 未下載"
-                        },
-                    )
-                    if (model.recommended) append(" · 推薦")
-                }
-                textSize = 14f
-                setTextColor(if (state == ModelState.READY) Ui.TEXT else Ui.TEXT_DIM)
-                isEnabled = state == ModelState.READY
-                isChecked = model.id == currentId
-                setPadding(paddingLeft, paddingTop, paddingRight, paddingBottom)
-            }
-            rb.setOnClickListener {
-                prefs.defaultModelId = model.id
-                buildServiceInfo()
-            }
-            group.addView(rb)
-        }
     }
 
     // ------------------------------------------------------------------ 語言
@@ -99,39 +57,9 @@ class SettingsActivity : Activity() {
         }
     }
 
-    // ------------------------------------------------------------------ 下載來源
+    // ------------------------------------------------------------------ 錄音時間
 
-    /**
-     * 模型下載來源（v0.5.0）。
-     *
-     * 預設「自動」= 跟隨介面語言（中文→中國鏡像站，其他→HuggingFace 官方），
-     * 原作者要求「英文環境下切換到境外來源下載」即由此實作；
-     * 也可手動鎖定某一來源，覆蓋語言推斷。
-     */
-    private fun buildSource() {
-        val rg = findViewById<RadioGroup>(R.id.rgSource)
-        when (prefs.modelSourceOverride) {
-            ModelCatalog.Source.MIRROR.name -> rg.check(R.id.rbSourceMirror)
-            ModelCatalog.Source.OFFICIAL.name -> rg.check(R.id.rbSourceOfficial)
-            else -> rg.check(R.id.rbSourceAuto)
-        }
-        rg.setOnCheckedChangeListener { _, checkedId ->
-            prefs.modelSourceOverride = when (checkedId) {
-                R.id.rbSourceMirror -> ModelCatalog.Source.MIRROR.name
-                R.id.rbSourceOfficial -> ModelCatalog.Source.OFFICIAL.name
-                else -> ""   // 空 = 自動（跟隨語言）
-            }
-            buildServiceInfo()
-        }
-    }
-
-    // ------------------------------------------------------------------ 串流 / 端點
-
-    private fun buildStreamingAndEndpoints() {
-        val sw = findViewById<Switch>(R.id.swStreaming)
-        sw.isChecked = prefs.preferStreaming
-        sw.setOnCheckedChangeListener { _, checked -> prefs.preferStreaming = checked }
-
+    private fun buildEndpoints() {
         val tvSilence = findViewById<TextView>(R.id.tvSilence)
         val sbSilence = findViewById<SeekBar>(R.id.sbSilence)
         sbSilence.max = 26
@@ -198,13 +126,6 @@ class SettingsActivity : Activity() {
             )
             append('\n')
             append(getString(R.string.settings_models_used, ModelCatalog.human(used)))
-            append('\n')
-            append(
-                getString(
-                    R.string.settings_source_line,
-                    prefs.modelSource(LocaleHelper.langTag(this@SettingsActivity)).base,
-                ),
-            )
         }
     }
 
@@ -212,9 +133,5 @@ class SettingsActivity : Activity() {
         override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) = Unit
         override fun onStartTrackingTouch(seekBar: SeekBar?) = Unit
         override fun onStopTrackingTouch(seekBar: SeekBar?) = Unit
-    }
-
-    companion object {
-        private const val ViewIdBase = 10_000
     }
 }

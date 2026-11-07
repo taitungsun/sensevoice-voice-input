@@ -19,39 +19,6 @@
             android:textSize="22sp"
             android:textStyle="bold" />
 
-        <!-- 預設模型 -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:background="@drawable/bg_card"
-            android:orientation="vertical"
-            android:padding="16dp">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/settings_default_model"
-                android:textColor="@color/accent"
-                android:textSize="13sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:text="@string/settings_default_model_hint"
-                android:textColor="@color/text_secondary"
-                android:textSize="12sp" />
-
-            <RadioGroup
-                android:id="@+id/rgModel"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:orientation="vertical" />
-        </LinearLayout>
-
         <!-- 辨識語言 -->
         <LinearLayout
             android:layout_width="match_parent"
@@ -99,62 +66,7 @@
             </RadioGroup>
         </LinearLayout>
 
-        <!-- 模型下載來源（v0.5.0）：預設跟隨介面語言，可手動覆蓋 -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:orientation="vertical"
-            android:background="@drawable/bg_card"
-            android:padding="16dp">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/settings_source"
-                android:textColor="@color/accent"
-                android:textSize="13sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:text="@string/settings_source_hint"
-                android:textColor="@color/text_secondary"
-                android:textSize="11sp" />
-
-            <RadioGroup
-                android:id="@+id/rgSource"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:orientation="vertical">
-                <RadioButton
-                    android:id="@+id/rbSourceAuto"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/source_auto"
-                    android:textColor="@color/text_primary"
-                    android:textSize="14sp" />
-                <RadioButton
-                    android:id="@+id/rbSourceMirror"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/source_mirror"
-                    android:textColor="@color/text_primary"
-                    android:textSize="14sp" />
-                <RadioButton
-                    android:id="@+id/rbSourceOfficial"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/source_official"
-                    android:textColor="@color/text_primary"
-                    android:textSize="14sp" />
-            </RadioGroup>
-        </LinearLayout>
-
-        <!-- 串流偏好 + 端點參數 -->
+        <!-- 錄音時間（靜音判定 / 單句最長 / 未偵測到語音） -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -162,22 +74,6 @@
             android:background="@drawable/bg_card"
             android:orientation="vertical"
             android:padding="16dp">
-
-            <Switch
-                android:id="@+id/swStreaming"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/settings_streaming"
-                android:textColor="@color/text_primary"
-                android:textSize="15sp" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
-                android:text="@string/settings_streaming_hint"
-                android:textColor="@color/text_secondary"
-                android:textSize="12sp" />
 
             <TextView
                 android:id="@+id/tvSilence"

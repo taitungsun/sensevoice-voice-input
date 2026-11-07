@@ -13,7 +13,7 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import java.util.Locale
 
-/** 模型管理頁：列出全部模型，支援下載（斷點續傳+驗證）、取消、刪除、設為預設 */
+/** 模型管理頁：下載（斷點續傳+驗證）、取消、刪除 */
 class ModelsActivity : Activity(), DownloadBus.Listener {
 
     private lateinit var store: ModelStore
@@ -32,11 +32,6 @@ class ModelsActivity : Activity(), DownloadBus.Listener {
             ctx = this,
             onDownload = { model -> toggleDownload(model) },
             onDelete = { model -> confirmDelete(model) },
-            onUse = { model ->
-                prefs.defaultModelId = model.id
-                Ui.toast(this, "預設模型：${model.name}")
-                adapter.notifyDataSetChanged()
-            },
         )
 
         findViewById<ListView>(R.id.listModels).adapter = adapter
@@ -100,7 +95,6 @@ class ModelsActivity : Activity(), DownloadBus.Listener {
         private val ctx: Context,
         private val onDownload: (AsrModel) -> Unit,
         private val onDelete: (AsrModel) -> Unit,
-        private val onUse: (AsrModel) -> Unit,
     ) : BaseAdapter() {
 
         override fun getCount(): Int = ModelCatalog.MODELS.size
@@ -114,15 +108,9 @@ class ModelsActivity : Activity(), DownloadBus.Listener {
             val model = ModelCatalog.MODELS[position]
             val state = store.state(model)
             val running = DownloadBus.isRunning(model.id)
-            val isDefault = prefs.defaultModel()?.id == model.id
 
-            view.findViewById<TextView>(R.id.tvName).text = buildString {
-                append(model.name)
-                if (isDefault) append("  ·  預設")
-            }
-            view.findViewById<TextView>(R.id.tvKind).text =
-                (if (model.streaming) getString(R.string.label_streaming) else getString(R.string.label_offline)) +
-                    if (model.recommended) " · 推薦" else ""
+            view.findViewById<TextView>(R.id.tvName).text = model.name
+            view.findViewById<TextView>(R.id.tvKind).text = getString(R.string.label_offline)
 
             view.findViewById<TextView>(R.id.tvMeta).text =
                 "${model.langs} · ${ModelCatalog.human(model.totalBytes)}\n${model.note}"
@@ -142,10 +130,7 @@ class ModelsActivity : Activity(), DownloadBus.Listener {
                     bar.progress = pct
                 }
                 running -> {
-                    // 顯示**實際使用的來源**（v0.5.0：中國鏡像站 / 其他語言官方來源）
-                    val src = Prefs(this@ModelsActivity)
-                        .modelSource(LocaleHelper.langTag(this@ModelsActivity))
-                    tvState.text = "下載中…（正在連線 ${src.base.substringAfter("://")}）"
+                    tvState.text = "下載中…（正在連線 ${ModelCatalog.BASE.substringAfter("://")}）"
                     tvState.setTextColor(Ui.ACCENT)
                     bar.visibility = View.VISIBLE
                     bar.isIndeterminate = true
@@ -178,13 +163,6 @@ class ModelsActivity : Activity(), DownloadBus.Listener {
                 else -> getString(R.string.btn_download)
             }
             btnDownload.setOnClickListener { onDownload(model) }
-
-            val btnUse = view.findViewById<TextView>(R.id.btnUse)
-            btnUse.alpha = if (state == ModelState.READY) 1f else 0.4f
-            btnUse.setOnClickListener {
-                if (state == ModelState.READY) onUse(model)
-                else Ui.toast(ctx, "先下載這個模型")
-            }
 
             val btnDelete = view.findViewById<TextView>(R.id.btnDelete)
             btnDelete.alpha = if (state == ModelState.MISSING) 0.4f else 1f

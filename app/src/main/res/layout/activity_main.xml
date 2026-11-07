@@ -94,7 +94,7 @@
                 android:textColor="@color/text_secondary"
                 android:textSize="12sp" />
 
-            <!-- 三個操作改為整列清單項目（v0.4.0）：原作者回饋三個按鈕並排會擠壓，
+            <!-- 操作改為整列清單項目（v0.4.0）：原作者回饋按鈕並排會擠壓，
                  改成擴充功能中心那種「圖示 + 標題 + 副標題 + 箭頭」的行，窄螢幕也不會擠。 -->
             <LinearLayout
                 android:id="@+id/rowRunCheck"
@@ -135,62 +135,6 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="2dp"
                         android:text="@string/row_check_sub"
-                        android:textColor="@color/text_secondary"
-                        android:textSize="12sp" />
-                </LinearLayout>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="›"
-                    android:textColor="@color/text_secondary"
-                    android:textSize="18sp" />
-            </LinearLayout>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="0.5dp"
-                android:layout_marginStart="50dp"
-                android:background="@color/stroke" />
-
-            <LinearLayout
-                android:id="@+id/rowSetDefault"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:clickable="true"
-                android:focusable="true"
-                android:background="?android:attr/selectableItemBackground"
-                android:paddingVertical="10dp">
-
-                <ImageView
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
-                    android:padding="8dp"
-                    android:src="@drawable/ic_star"
-                    android:background="@drawable/bg_icon_chip_soft"
-                    android:tint="@color/ok" />
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical"
-                    android:layout_marginStart="14dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/btn_set_default"
-                        android:textColor="@color/text_primary"
-                        android:textSize="15sp" />
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="2dp"
-                        android:text="@string/row_default_sub"
                         android:textColor="@color/text_secondary"
                         android:textSize="12sp" />
                 </LinearLayout>
