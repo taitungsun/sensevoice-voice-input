@@ -4,7 +4,7 @@
     android:height="108dp"
     android:viewportWidth="108"
     android:viewportHeight="108">
-    <!-- 简笔麦克风 + 声波 -->
+    <!-- 簡筆麥克風 + 聲波 -->
     <path
         android:fillColor="#7DD3FC"
         android:pathData="M54,30c-4.42,0 -8,3.58 -8,8v14c0,4.42 3.58,8 8,8s8,-3.58 8,-8V38c0,-4.42 -3.58,-8 -8,-8z" />

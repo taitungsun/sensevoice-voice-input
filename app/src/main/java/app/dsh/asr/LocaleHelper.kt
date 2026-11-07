@@ -7,19 +7,19 @@ import android.content.Context
  *
  * ## 為什麼不直接用 Locale.getDefault()
  * Android 上 `Locale.getDefault()` 是 JVM 快取的靜態值：系統語言變更、
- * 甚至 `Resources` 配置更新後，它都可能還是舊值。實測把模擬器切到 zh-CN 後，
- * 用 `Locale.getDefault()` 仍解析出 en-US，導致下載源判定錯誤。
+ * 甚至 `Resources` 設定更新後，它都可能還是舊值。實測把模擬器切到 zh-CN 後，
+ * 用 `Locale.getDefault()` 仍解析出 en-US，導致下載來源判定錯誤。
  *
- * `resources.configuration.locales` 才是**當前應用真實生效**的語言
- * （系統語言變更或 attachBaseContext 包裹後都會同步重新整理），故統一從這裡讀。
+ * `resources.configuration.locales` 才是**目前 App 實際生效**的語言
+ * （系統語言變更或 attachBaseContext 包裹後都會同步更新），故統一從這裡讀。
  */
 object LocaleHelper {
 
     /**
-     * 當前生效語言的 BCP-47 標籤（如 `zh-CN` / `en-US`）。
+     * 目前生效語言的 BCP-47 標籤（如 `zh-CN` / `en-US`）。
      *
-     * 相容兩種讀法：API 24+ 用 `configuration.locales`（有序列表，取首個），
-     * 更老的回退到已廢棄的 `configuration.locale`。
+     * 相容兩種讀法：API 24+ 用 `configuration.locales`（有序列表，取第一個），
+     * 更舊的版本改用已廢棄的 `configuration.locale`。
      */
     fun langTag(context: Context): String {
         val cfg = context.resources.configuration

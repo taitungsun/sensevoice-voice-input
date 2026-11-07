@@ -1,4 +1,4 @@
-// dsh-asr-service 根构建脚本
+// dsh-asr-service 根建置腳本
 plugins {
     id("com.android.application") version "8.13.0" apply false
     id("org.jetbrains.kotlin.android") version "2.1.0" apply false

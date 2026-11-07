@@ -9,8 +9,8 @@ import java.util.concurrent.CopyOnWriteArrayList
 import java.util.concurrent.atomic.AtomicBoolean
 
 /**
- * 應用級下載匯流排：模型下載跑在獨立執行緒，跨頁面持續進行；
- * 頁面註冊監聽拿進度（主執行緒回撥）。
+ * App 層級的下載管理：模型下載跑在獨立執行緒，跨頁面持續進行；
+ * 頁面註冊監聽取得進度（主執行緒回呼）。
  */
 object DownloadBus {
 

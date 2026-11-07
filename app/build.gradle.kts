@@ -3,7 +3,7 @@ plugins {
     id("org.jetbrains.kotlin.android")
 }
 
-// 构建目标 ABI 可由 -Pabi=x86_64 覆盖（模拟器测试用），默认真机 arm64
+// 建置目標 ABI 可用 -Pabi=x86_64 覆寫（模擬器測試用），預設為實機 arm64
 val targetAbi = (project.findProperty("abi") as String?) ?: "arm64-v8a"
 
 android {
@@ -14,7 +14,7 @@ android {
         // Fork: own package ID so it can be installed next to upstream app.dsh.asr.
         applicationId = "io.github.taitungsun.sensevoice"
         minSdk = 26
-        // targetSdk 28 —— 与 dsh-android 保持一致（sideload 分发策略）
+        // targetSdk 28 —— 與 dsh-android 保持一致（側載發布策略）
         targetSdk = 28
         versionCode = 14
         versionName = "0.5.2-tw.2"
@@ -63,9 +63,9 @@ android {
 
 dependencies {
     implementation(files("libs/sherpa-onnx-1.13.8.aar"))
-    // Shizuku（v0.4.0）：用于「一键设为系统默认识别服务」——
-    // 普通应用没有 WRITE_SECURE_SETTINGS，但 Shizuku 能以 adb(uid 2000) 身份
-    // 执行 `settings put secure voice_recognition_service ...`，从而自动完成设置。
+    // Shizuku（v0.4.0）：用於「一鍵設為系統預設辨識服務」——
+    // 一般 App 沒有 WRITE_SECURE_SETTINGS，但 Shizuku 能以 adb(uid 2000) 身分
+    // 執行 `settings put secure voice_recognition_service ...`，自動完成設定。
     implementation("dev.rikka.shizuku:api:13.1.5")
     implementation("dev.rikka.shizuku:provider:13.1.5")
     implementation("dev.rikka.shizuku:aidl:13.1.5")

@@ -2,18 +2,18 @@ package app.dsh.asr
 
 /**
  * 模型檔案：檔名 + hf-mirror 上的**精確位元組數**（實測 Content-Length）。
- * 下載完成後按此校驗，防止半截/被篡改的檔案進入推理。
+ * 下載完成後按此驗證，防止半截/被篡改的檔案進入推論。
  */
 data class ModelFile(val name: String, val bytes: Long)
 
 enum class ModelKind {
-    /** SenseVoice：非流式、多語種、帶標點 */
+    /** SenseVoice：非串流、多語言、帶標點 */
     SENSE_VOICE,
 
-    /** Paraformer：非流式、中文、帶時間戳 */
+    /** Paraformer：非串流、中文、帶時間戳記 */
     PARAFORMER,
 
-    /** 流式 zipformer transducer：邊說邊出字 */
+    /** 串流 zipformer transducer：邊說邊出字 */
     STREAMING_TRANSDUCER,
 }
 
@@ -33,21 +33,21 @@ data class AsrModel(
 
 object ModelCatalog {
 
-    /** 國內可直連的映象（hf-mirror.com）。下載 URL 形如 <base>/<repo>/resolve/main/<file> */
+    /** 中國可直連的鏡像站（hf-mirror.com）。下載 URL 形如 <base>/<repo>/resolve/main/<file> */
     const val MIRROR = "https://hf-mirror.com"
 
-    /** HuggingFace 官方源（境外網路環境下更快） */
+    /** HuggingFace 官方來源（境外網路環境下更快） */
     const val OFFICIAL = "https://huggingface.co"
 
     /**
-     * 下載源（v0.5.0）。
+     * 下載來源（v0.5.0）。
      *
-     * 主人要求「英文環境下切換到國外源下載」——
-     * 國內映象對境外使用者反而慢/不可達，官方源則相反。
+     * 原作者要求「英文環境下切換到境外來源下載」——
+     * 中國鏡像站對境外使用者反而慢/不可達，官方來源則相反。
      * 所以**按介面語言自動選**，同時允許使用者在設定裡手動覆蓋。
      */
     enum class Source(val base: String) {
-        /** 國內映象 hf-mirror.com */
+        /** 中國鏡像站 hf-mirror.com */
         MIRROR(ModelCatalog.MIRROR),
 
         /** HuggingFace 官方 */
@@ -55,10 +55,10 @@ object ModelCatalog {
     }
 
     /**
-     * 按語言程式碼決定預設源：中文 → 國內映象，其它 → 官方。
+     * 按語言代碼決定預設來源：中文 → 中國鏡像站，其他 → 官方。
      *
-     * 判據用語言標籤字首（`zh`），與介面語言切換保持一致：
-     * 使用者把應用語言設成中文，多半在國內網路；設成英文，多半在境外。
+     * 判斷依據用語言標籤字首（`zh`），與介面語言切換保持一致：
+     * 使用者把 App 語言設成中文，多半在中國網路；設成英文，多半在境外。
      */
     fun defaultSource(langTag: String?): Source {
         val t = langTag?.lowercase().orEmpty()
@@ -68,13 +68,13 @@ object ModelCatalog {
         return if (t.startsWith("zh") && !traditional) Source.MIRROR else Source.OFFICIAL
     }
 
-    /** 解析源基址：空/非法值回退到官方（英文預設），保證永遠有可用 URL */
+    /** 解析來源基底網址：空/無效值退回官方（英文預設），保證永遠有可用 URL */
     fun sourceFrom(name: String?): Source =
         Source.entries.firstOrNull { it.name == name } ?: Source.OFFICIAL
 
     /**
-     * 構造下載 URL。
-     * @param source 下載源（由 Prefs 提供，見 `Prefs.modelSource`）
+     * 建立下載 URL。
+     * @param source 下載來源（由 Prefs 提供，見 `Prefs.modelSource`）
      */
     fun url(model: AsrModel, file: ModelFile, source: Source = Source.MIRROR): String =
         "${source.base}/${model.repo}/resolve/main/${file.name}"
@@ -123,7 +123,7 @@ object ModelCatalog {
             id = "paraformer-zh-small-int8",
             name = "Paraformer 中文（小）",
             langs = "中",
-            note = "輕量中文（82MB），下載快、占用資源少",
+            note = "輕量中文（82MB），下載快、佔用資源少",
             repo = "csukuangfj/sherpa-onnx-paraformer-zh-small-2024-03-09",
             kind = ModelKind.PARAFORMER,
             files = listOf(
@@ -177,7 +177,7 @@ object ModelCatalog {
 
     fun byId(id: String?): AsrModel? = MODELS.firstOrNull { it.id == id }
 
-    /** 體積可讀化：239.5 MB / 25.4 MB */
+    /** 大小轉成易讀格式：239.5 MB / 25.4 MB */
     fun human(bytes: Long): String {
         if (bytes < 1024) return "$bytes B"
         val kb = bytes / 1024.0

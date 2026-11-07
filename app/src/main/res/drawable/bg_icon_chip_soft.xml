@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- 图标胶囊底座：深色圆角 + 细描边（与主项目一致的视觉语言） -->
+<!-- 圖示膠囊底座：深色圓角 + 細邊框（與主專案一致的視覺風格） -->
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="rectangle">
     <solid android:color="#FF1B222C" />

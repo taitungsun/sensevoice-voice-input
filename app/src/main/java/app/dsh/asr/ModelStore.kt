@@ -8,28 +8,28 @@ import java.net.HttpURLConnection
 import java.net.URL
 import java.util.concurrent.atomic.AtomicBoolean
 
-/** 模型在本地磁碟上的狀態 */
+/** 模型在本機磁碟上的狀態 */
 enum class ModelState { MISSING, PARTIAL, READY }
 
 class DownloadCancelled : Exception("download cancelled")
 
 /**
- * 模型倉庫：負責落地路徑、狀態判斷、下載（斷點續傳 + 體積校驗）、刪除。
+ * 模型儲存庫：負責儲存路徑、狀態判斷、下載（斷點續傳 + 大小驗證）、刪除。
  *
- * 落盤位置：`<外部私有目錄>/models/<modelId>/<file>`，外部私有目錄不可用時退回內部 filesDir。
- * 說明：外部私有目錄無需任何儲存許可權（應用專屬目錄），且方便使用者用檔案管理器檢視/清理。
+ * 儲存位置：`<外部私有目錄>/models/<modelId>/<file>`，外部私有目錄不可用時退回內部 filesDir。
+ * 說明：外部私有目錄無需任何儲存權限（App 專屬目錄），且方便使用者用檔案管理器檢視/清理。
  */
 class ModelStore(context: Context) {
 
     private val appCtx = context.applicationContext
 
     /**
-     * 當前生效的下載源（v0.5.0）。
-     * 按介面語言推斷（中文→hf-mirror，其它→HuggingFace 官方），設定頁可手動覆蓋。
+     * 目前生效的下載來源（v0.5.0）。
+     * 按介面語言推斷（中文→hf-mirror，其他→HuggingFace 官方），設定頁可手動覆蓋。
      *
      * ⚠️ 語言必須從 `resources.configuration` 讀，**不能用 `Locale.getDefault()`**：
-     * 後者是 JVM 快取的靜態值，Android 在系統語言變更（或應用內切換語言）後
-     * 不會重新整理它 —— 實測把系統切到中文後仍解析成官方源。
+     * 後者是 JVM 快取的靜態值，Android 在系統語言變更（或 App 內切換語言）後
+     * 不會更新它 —— 實測把系統切到中文後仍解析成官方來源。
      */
     private fun source(): ModelCatalog.Source =
         Prefs(appCtx).modelSource(LocaleHelper.langTag(appCtx))
@@ -45,13 +45,13 @@ class ModelStore(context: Context) {
 
     private fun partOf(model: AsrModel, file: ModelFile): File = File(dirOf(model), file.name + ".part")
 
-    /** 單個檔案是否完整（存在且位元組數精確匹配目錄中登記的實測大小） */
+    /** 單個檔案是否完整（存在且位元組數完全符合目錄中登記的實測大小） */
     fun fileReady(model: AsrModel, file: ModelFile): Boolean {
         val f = fileOf(model, file)
         return f.isFile && f.length() == file.bytes
     }
 
-    /** 已完整落盤的檔案集合 */
+    /** 已完整寫入的檔案集合 */
     fun readyFiles(model: AsrModel): List<ModelFile> = model.files.filter { fileReady(model, it) }
 
     fun state(model: AsrModel): ModelState {
@@ -73,15 +73,15 @@ class ModelStore(context: Context) {
         dir.delete()
     }
 
-    /** 當前已完整下載的模型 */
+    /** 目前已完整下載的模型 */
     fun readyModels(): List<AsrModel> = ModelCatalog.MODELS.filter { state(it) == ModelState.READY }
 
     /**
-     * 下載整個模型（多檔案序列）。
+     * 下載整個模型（多個檔案依序下載）。
      *
-     * @param onProgress (已完成位元組, 總位元組, 當前檔案說明)
-     * @param cancel 外部取消標誌（UI 上的「取消」）
-     * @return true = 全部檔案校驗透過
+     * @param onProgress (已完成位元組, 總位元組, 目前檔案說明)
+     * @param cancel 外部取消旗標（UI 上的「取消」）
+     * @return true = 全部檔案驗證通過
      */
     fun download(
         model: AsrModel,
@@ -103,7 +103,7 @@ class ModelStore(context: Context) {
 
     /**
      * 單檔案下載：支援 HTTP Range 斷點續傳。
-     * `.part` 累積 → 校驗長度 == 目錄登記位元組數 → 原子改名成正式檔案。
+     * `.part` 累積 → 驗證長度 == 目錄登記位元組數 → 原子改名成正式檔案。
      */
     private fun downloadFile(
         model: AsrModel,
@@ -125,7 +125,7 @@ class ModelStore(context: Context) {
             if (cancel.get()) throw DownloadCancelled()
 
             var existing = if (part.isFile) part.length() else 0L
-            if (existing > file.bytes) {           // 本地比遠端大：汙染，從頭來
+            if (existing > file.bytes) {           // 本機比遠端大：檔案有誤，從頭下載
                 part.delete()
                 existing = 0L
             }
@@ -182,7 +182,7 @@ class ModelStore(context: Context) {
                 conn?.disconnect()
             }
 
-            // 下載完成 → 嚴格校驗位元組數
+            // 下載完成 → 嚴格驗證位元組數
             val got = part.length()
             if (got == file.bytes) {
                 if (!part.renameTo(dest)) {

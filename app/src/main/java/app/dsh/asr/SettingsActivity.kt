@@ -11,8 +11,8 @@ import android.widget.TextView
 import java.util.Locale
 
 /**
- * 識別設定。
- * 同時作為系統「語音輸入 → 識別服務 → 設定」的入口（manifest 裡 settingsActivity 指向本頁）。
+ * 辨識設定。
+ * 同時作為系統「語音輸入 → 辨識服務 → 設定」的入口（manifest 裡 settingsActivity 指向本頁）。
  */
 class SettingsActivity : Activity() {
 
@@ -99,14 +99,14 @@ class SettingsActivity : Activity() {
         }
     }
 
-    // ------------------------------------------------------------------ 下載源
+    // ------------------------------------------------------------------ 下載來源
 
     /**
-     * 模型下載源（v0.5.0）。
+     * 模型下載來源（v0.5.0）。
      *
-     * 預設「自動」= 跟隨介面語言（中文→國內映象，其它→HuggingFace 官方），
-     * 主人要求「英文環境下切換到國外源下載」即由此實現；
-     * 也可手動鎖定某一源，覆蓋語言推斷。
+     * 預設「自動」= 跟隨介面語言（中文→中國鏡像站，其他→HuggingFace 官方），
+     * 原作者要求「英文環境下切換到境外來源下載」即由此實作；
+     * 也可手動鎖定某一來源，覆蓋語言推斷。
      */
     private fun buildSource() {
         val rg = findViewById<RadioGroup>(R.id.rgSource)
@@ -125,7 +125,7 @@ class SettingsActivity : Activity() {
         }
     }
 
-    // ------------------------------------------------------------------ 流式 / 端點
+    // ------------------------------------------------------------------ 串流 / 端點
 
     private fun buildStreamingAndEndpoints() {
         val sw = findViewById<Switch>(R.id.swStreaming)

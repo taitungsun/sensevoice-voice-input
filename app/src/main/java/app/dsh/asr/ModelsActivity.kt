@@ -13,7 +13,7 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import java.util.Locale
 
-/** 模型管理頁：列出全部模型，支援下載（斷點續傳+校驗）、取消、刪除、設為預設 */
+/** 模型管理頁：列出全部模型，支援下載（斷點續傳+驗證）、取消、刪除、設為預設 */
 class ModelsActivity : Activity(), DownloadBus.Listener {
 
     private lateinit var store: ModelStore
@@ -142,7 +142,7 @@ class ModelsActivity : Activity(), DownloadBus.Listener {
                     bar.progress = pct
                 }
                 running -> {
-                    // 顯示**實際使用的源**（v0.5.0：中文映象 / 其它語言官方源）
+                    // 顯示**實際使用的來源**（v0.5.0：中國鏡像站 / 其他語言官方來源）
                     val src = Prefs(this@ModelsActivity)
                         .modelSource(LocaleHelper.langTag(this@ModelsActivity))
                     tvState.text = "下載中…（正在連線 ${src.base.substringAfter("://")}）"

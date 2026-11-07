@@ -32,18 +32,18 @@ class MainActivity : Activity(), DownloadBus.Listener {
         tvServiceState = findViewById(R.id.tvServiceState)
         tvModelState = findViewById(R.id.tvModelState)
 
-        // 可用性檢測（v0.3.0）：主人問「怎麼確認能不能正常使用」——
-        // 一鍵跑四層檢測（服務註冊 / 系統預設 / 模型載入 / 完整鏈路），逐項給結論
+        // 可用性檢查（v0.3.0）：原作者問「怎麼確認能不能正常使用」——
+        // 一鍵跑四層檢查（服務註冊 / 系統預設 / 模型載入 / 完整流程），逐項給結論
         findViewById<android.view.View>(R.id.rowRunCheck).setOnClickListener { runCheck() }
         // 「設為系統預設」（v0.4.0）：三級嘗試
-        //  ① Shizuku（主人要求：嘗試申請 SHZ 許可權）—— 有裝就用它，成功率最高
+        //  ① Shizuku（原作者要求：嘗試申請 SHZ 權限）—— 有裝就用它，成功率最高
         //  ② root / 直接寫
         //  ③ 都不行 → 明確告知改用「呼叫方指定服務」
         findViewById<android.view.View>(R.id.rowSetDefault).setOnClickListener {
             setDefaultFlow()
         }
         findViewById<android.view.View>(R.id.rowOpenSettings).setOnClickListener {
-            // 多路徑兜底：國產 ROM 的設定入口很亂，逐條嘗試直到真的跳走
+            // 多路徑備援：中國廠商 ROM 的設定入口很亂，逐條嘗試直到真的跳走
             if (!SelfCheck.openVoiceInputSettings(this)) {
                 Ui.toast(this, getString(R.string.check_open_fail))
             }
@@ -120,13 +120,13 @@ class MainActivity : Activity(), DownloadBus.Listener {
         val ok = runCatching {
             startActivity(Intent(Settings.ACTION_VOICE_INPUT_SETTINGS))
         }.isSuccess
-        if (!ok) Ui.toast(this, "系統沒有「語音輸入」設定頁，請到 系統設定 → 語言和輸入法 裡找")
+        if (!ok) Ui.toast(this, "系統沒有「語音輸入」設定頁，請到 系統設定 → 語言與輸入設定 裡找")
     }
 
-    // ------------------------------------------------------------------ 自檢：走 SpeechRecognizer 全鏈路
+    // ------------------------------------------------------------------ 自我檢查：走 SpeechRecognizer 全流程
 
 
-    // ------------------------------------------------------------------ 自檢：WAV 解碼（無麥克風也能驗）
+    // ------------------------------------------------------------------ 自我檢查：WAV 解碼（無麥克風也能驗）
 
 
     // ------------------------------------------------------------------ 設為系統預設
@@ -137,7 +137,7 @@ class MainActivity : Activity(), DownloadBus.Listener {
     }
 
     /**
-     * 設為系統預設識別服務：Shizuku 優先 → root/直接寫 → 明確失敗提示。
+     * 設為系統預設辨識服務：Shizuku 優先 → root/直接寫 → 明確失敗提示。
      */
     private fun setDefaultFlow() {
         val spec = "${packageName}/${AsrRecognitionService::class.java.name}"
@@ -158,7 +158,7 @@ class MainActivity : Activity(), DownloadBus.Listener {
                     }
                 }, "shizuku-set").apply { isDaemon = true; start() }
             }
-            // ② 裝了 Shizuku 但沒授權 → 申請許可權，成功後自動繼續
+            // ② 裝了 Shizuku 但沒授權 → 申請權限，成功後自動繼續
             ShizukuHelper.isInstalled(this) -> {
                 tv.text = getString(R.string.set_requesting_shizuku)
                 ShizukuHelper.requestPermission { granted ->
@@ -193,7 +193,7 @@ class MainActivity : Activity(), DownloadBus.Listener {
         }
     }
 
-    /** Shizuku 被拒後的兜底：root / 直接寫 */
+    /** Shizuku 被拒後的備援：root / 直接寫 */
     private fun fallbackSetDefault(spec: String, tv: TextView) {
         Thread({
             val ok = SelfCheck.trySetAsDefault(this)
@@ -204,11 +204,11 @@ class MainActivity : Activity(), DownloadBus.Listener {
         }, "fallback-set").apply { isDaemon = true; start() }
     }
 
-    // ------------------------------------------------------------------ 可用性檢測
+    // ------------------------------------------------------------------ 可用性檢查
 
     /**
-     * 一鍵檢測：後臺跑（第 ④ 項要等識別回撥），結果回主執行緒逐項顯示。
-     * 每項都帶「該怎麼辦」，把玄學問題變成可操作項。
+     * 一鍵檢查：背景跑（第 ④ 項要等辨識回呼），結果回主執行緒逐項顯示。
+     * 每項都帶「該怎麼辦」，把摸不著頭緒的問題變成可操作的步驟。
      */
     private fun runCheck() {
         val tv = findViewById<TextView>(R.id.tvCheckResult)

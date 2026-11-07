@@ -32,7 +32,7 @@ const val SAMPLE_RATE = 16_000
 /** 音訊小工具：WAV 讀取、PCM16 → float、能量計算 */
 object AudioUtil {
 
-    /** 讀 16bit PCM WAV → 16kHz 單聲道 float（用於離線自檢，不依賴麥克風） */
+    /** 讀 16bit PCM WAV → 16kHz 單聲道 float（用於離線自我檢查，不依賴麥克風） */
     fun readWavFloats(file: File): FloatArray {
         val bytes = file.readBytes()
         require(bytes.size > 44) { "wav too small" }
@@ -71,7 +71,7 @@ object AudioUtil {
         return if (rate == SAMPLE_RATE) mono else resample(mono, rate, SAMPLE_RATE)
     }
 
-    /** 線性插值重取樣（測試音訊用，夠用） */
+    /** 線性內插重取樣（測試音訊用，夠用） */
     fun resample(input: FloatArray, from: Int, to: Int): FloatArray {
         if (from == to) return input
         val outLen = (input.size.toLong() * to / from).toInt()
@@ -104,7 +104,7 @@ object AudioUtil {
             ((b[at + 2].toInt() and 0xFF) shl 16) or ((b[at + 3].toInt() and 0xFF) shl 24)
 }
 
-/** 一次識別請求的引數（由 RecognitionService 收到的 Intent 解析而來） */
+/** 一次辨識請求的參數（由 RecognitionService 收到的 Intent 解析而來） */
 data class RequestParams(
     val langHint: String,       // auto | zh | en
     val partialsWanted: Boolean,
@@ -116,8 +116,8 @@ data class RequestParams(
 )
 
 /**
- * 引擎快取：同一程序內複用 sherpa 識別器（載入 240MB 模型代價高，不能每次會話重建）。
- * 注意：sherpa 的 Recognizer 不是執行緒安全的，呼叫方需自行保證序列（本應用單會話序列）。
+ * 引擎快取：同一行程內重複使用 sherpa 辨識器（載入 240MB 模型代價高，不能每次工作階段重建）。
+ * 注意：sherpa 的 Recognizer 不是執行緒安全的，呼叫方需自行確保依序執行（本 App 同時只有一個工作階段）。
  */
 object EngineHolder {
 
@@ -223,7 +223,7 @@ object EngineHolder {
         }
         offlineCfg = cfg
         // 模型放在外部私有目錄（SD 卡路徑）：必須傳 null AssetManager，
-        // 否則 sherpa 原生層會拒絕載入並 abort 程序（file-utils.cc: ReadFile）。
+        // 否則 sherpa 原生層會拒絕載入並 abort 行程（file-utils.cc: ReadFile）。
         return OfflineRecognizer(null, cfg)
     }
 
@@ -248,14 +248,14 @@ object EngineHolder {
             modelConfig = mc
             decodingMethod = "greedy_search"
             enableEndpoint = true
-            // 端點判定引數（v0.4.1 提速，主人反饋"不夠實時"）：
+            // 端點判定參數（v0.4.1 加速，原作者回饋"不夠即時"）：
             //  sherpa 的 EndpointRule(必須含非靜音, 尾部靜音秒數, 最小長度秒數)
-            //  舊值 rule1=2.4s 太保守 —— 說完話要等 2.4 秒才判定結束，感覺拖沓。
-            //  新值 1.2s：正常語速下句間停頓約 0.5~1s，1.2s 既不會切句又明顯更快。
+            //  舊值 rule1=2.4s 太保守 —— 說完話要等 2.4 秒才判定結束，感覺拖延。
+            //  新值 1.2s：正常語速下句間停頓約 0.5~1s，1.2s 既不會斷句又明顯更快。
             endpointConfig = EndpointConfig(
                 rule1 = EndpointRule(false, 1.2f, 0.0f),   // 說完後的靜音判定
                 rule2 = EndpointRule(true, 0.8f, 0.0f),    // 一直沒說話時的判定
-                rule3 = EndpointRule(false, 0.0f, 20.0f),  // 超長兜底
+                rule3 = EndpointRule(false, 0.0f, 20.0f),  // 超長備援
             )
         }
         // 同上：絕對路徑 + null assetManager
@@ -263,7 +263,7 @@ object EngineHolder {
     }
 }
 
-/** 一次識別會話：錄音 → 送入引擎 → 回撥結果。執行在獨立執行緒，避免阻塞服務主執行緒。 */
+/** 一次辨識工作階段：錄音 → 送入引擎 → 回呼結果。執行在獨立執行緒，避免阻塞服務主執行緒。 */
 class CaptureSession(
     private val ctx: Context,
     private val callback: android.speech.RecognitionService.Callback,
@@ -285,7 +285,7 @@ class CaptureSession(
         }
     }
 
-    /** 呼叫方 stopListening()：把已有音訊當作"使用者說完"處理，返回最終結果 */
+    /** 呼叫方 stopListening()：把已有音訊當作"使用者說完"處理，傳回最終結果 */
     fun requestStop() = stopFlag.set(true)
 
     /** 呼叫方 cancel()：丟棄結果，立即結束 */
@@ -347,7 +347,7 @@ class CaptureSession(
         val recognizer by lazy { EngineHolder.offline(ctx, model, langCode) }
         val buf = FloatBuffer()
         val chunk = ShortArray(CHUNK_SHORTS)
-        // sherpa Recognizer 非執行緒安全：中間解碼執行緒與最終解碼共用一把鎖序列化
+        // sherpa Recognizer 非執行緒安全：中間解碼執行緒與最終解碼共用一把鎖，依序執行
         val engineLock = Any()
         val partial = PartialDecoder { samples -> synchronized(engineLock) { decodeOffline(recognizer, samples) } }
         var noiseFloor = 0.004f
@@ -433,7 +433,7 @@ class CaptureSession(
         }
     }
 
-    // ------------------------------------------------------------------ 流式
+    // ------------------------------------------------------------------ 串流
 
     private fun runStreaming(recorder: AudioRecord) {
         val recognizer = EngineHolder.online(ctx, model)
@@ -499,7 +499,7 @@ class CaptureSession(
         }
     }
 
-    // ------------------------------------------------------------------ 公共
+    // ------------------------------------------------------------------ 共用
 
     private fun deliver(text: String, speechStarted: Boolean) {
         if (text.isEmpty()) {
@@ -550,7 +550,7 @@ class CaptureSession(
             SAMPLE_RATE, AudioFormat.CHANNEL_IN_MONO, AudioFormat.ENCODING_PCM_16BIT,
         )
         if (minBuf <= 0) throw IllegalStateException("getMinBufferSize=$minBuf")
-        val bufferBytes = max(minBuf, SAMPLE_RATE * 2 * 4)   // 約 4 秒餘量
+        val bufferBytes = max(minBuf, SAMPLE_RATE * 2 * 4)   // 約 4 秒緩衝
         val format = AudioFormat.Builder()
             .setEncoding(AudioFormat.ENCODING_PCM_16BIT)
             .setSampleRate(SAMPLE_RATE)
@@ -558,7 +558,7 @@ class CaptureSession(
             .build()
         val source = MediaRecorder.AudioSource.VOICE_RECOGNITION
 
-        // API 31+：按官方建議把麥克風訪問歸因到呼叫方（識別失敗則退回普通上下文）
+        // API 31+：按官方建議把麥克風存取歸因到呼叫方（辨識失敗則退回一般 context）
         if (Build.VERSION.SDK_INT >= 31) {
             val attributed = runCatching {
                 val attribCtx = ctx.createContext(
@@ -607,7 +607,7 @@ class CaptureSession(
     }
 }
 
-/** 只增不改的 float 環形緩衝（會話內音訊累積） */
+/** 只增不改的 float 環形緩衝（工作階段內音訊累積） */
 class FloatBuffer(initialCapacity: Int = SAMPLE_RATE * 8) {
     private var data = FloatArray(initialCapacity)
     var size = 0
@@ -630,7 +630,7 @@ class FloatBuffer(initialCapacity: Int = SAMPLE_RATE * 8) {
 
 /**
  * 離線模型的"中間結果"解碼執行緒：只處理最新快照，避免阻塞錄音執行緒丟音訊。
- * 同一個 Recognizer 不能被併發呼叫，本執行緒在會話結束前會被 join。
+ * 同一個 Recognizer 不能同時被呼叫，本執行緒在工作階段結束前會被 join。
  */
 class PartialDecoder(private val decode: (FloatArray) -> String) {
 
@@ -681,7 +681,7 @@ class PartialDecoder(private val decode: (FloatArray) -> String) {
     }
 }
 
-/** 離線引擎自檢：直接用 WAV 檔案跑推理，用於在沒有麥克風的模擬器上驗證鏈路 */
+/** 離線引擎自我檢查：直接用 WAV 檔案跑推論，用於在沒有麥克風的模擬器上驗證流程 */
 object EngineSelfTest {
 
     data class Result(val text: String, val decodeMs: Long, val audioSec: Float, val ok: Boolean, val error: String?)

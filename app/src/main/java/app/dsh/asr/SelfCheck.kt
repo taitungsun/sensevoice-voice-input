@@ -16,22 +16,22 @@ import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 
 /**
- * 可用性自檢（v0.3.0）。
+ * 可用性自我檢查（v0.3.0）。
  *
  * ## 為什麼需要
- * 主人問「我怎麼確認它能不能正常使用呢」—— 語音識別涉及**四層**，任何一層斷都表現為
+ * 原作者問「我怎麼確認它能不能正常使用呢」—— 語音辨識涉及**四層**，任何一層斷都表現為
  * "點了沒反應"，使用者無從判斷是哪一層的問題：
  *   ① 服務是否被系統註冊/可見
- *   ② 是否被設為系統預設識別服務（國產 ROM 常把設定頁藏起來，使用者設不了）
+ *   ② 是否被設為系統預設辨識服務（中國廠商 ROM 常把設定頁藏起來，使用者設不了）
  *   ③ 模型是否已下載且能真正載入（檔案缺一個就載入失敗）
- *   ④ 完整鏈路：`SpeechRecognizer` → 本服務 → 引擎 → 回撥（**真跑一次**）
+ *   ④ 完整流程：`SpeechRecognizer` → 本服務 → 引擎 → 回呼（**真跑一次**）
  *
- * 本類逐層檢測並給出**明確結論 + 下一步該怎麼辦**，把"玄學"變成可操作項。
+ * 本類逐層檢查並給出**明確結論 + 下一步該怎麼辦**，把摸不著頭緒的問題變成可操作的步驟。
  *
  * ## 第 ④ 項怎麼在沒有麥克風時也能驗
- * 用 `SpeechRecognizer` 真實繫結本服務併發起一次識別（不喂音訊），
- * 只要走到 `onReadyForSpeech` 就證明**繫結 + 服務 + 引擎初始化**整條鏈路通了；
- * 超時/報錯也能區分是哪一環（如 ERROR_CLIENT = 繫結失敗、ERROR_AUDIO = 錄音打不開）。
+ * 用 `SpeechRecognizer` 真實繫結本服務並發起一次辨識（不送入音訊），
+ * 只要走到 `onReadyForSpeech` 就證明**繫結 + 服務 + 引擎初始化**整條流程通了；
+ * 逾時/錯誤也能區分是哪一環（如 ERROR_CLIENT = 繫結失敗、ERROR_AUDIO = 錄音打不開）。
  */
 object SelfCheck {
 
@@ -47,7 +47,7 @@ object SelfCheck {
         val warn: Boolean = false,
     )
 
-    /** 完整檢測報告 */
+    /** 完整檢查報告 */
     data class Report(val items: List<Item>) {
         /** 關鍵項（①②③）全過就算"可用"；④ 失敗會單獨提示 */
         val usable: Boolean get() = items.filter { !it.warn }.all { it.ok }
@@ -60,8 +60,8 @@ object SelfCheck {
     }
 
     /**
-     * 跑完整自檢。**阻塞**（第 ④ 項要等識別回撥），請在後臺執行緒呼叫。
-     * @param onStage 進度回撥（主執行緒），讓介面能實時顯示"正在測哪一項"
+     * 跑完整自我檢查。**阻塞**（第 ④ 項要等辨識回呼），請在背景執行緒呼叫。
+     * @param onStage 進度回呼（主執行緒），讓介面能即時顯示"正在測哪一項"
      */
     fun run(ctx: Context, onStage: (String) -> Unit = {}): Report {
         val items = mutableListOf<Item>()
@@ -87,7 +87,7 @@ object SelfCheck {
             else "系統未列出本 App（可能被 ROM 攔截，請試著重新開機）",
         )
 
-        // ② 是否被設為系統預設（這項**決定其它 App 能否直接用**）
+        // ② 是否被設為系統預設（這項**決定其他 App 能否直接用**）
         onStage("檢查系統預設設定…")
         val current = runCatching {
             Settings.Secure.getString(ctx.contentResolver, "voice_recognition_service")
@@ -113,7 +113,7 @@ object SelfCheck {
             modelDetail = "還沒有可用的模型，請先到「辨識模型」下載一個（建議先下載最小的）"
         } else {
             modelOk = runCatching {
-                // 真正構建一次識別器 —— 檔案缺一個就會在這裡失敗
+                // 真正建立一次辨識器 —— 檔案缺一個就會在這裡失敗
                 if (target.streaming) {
                     EngineHolder.online(ctx, target)
                 } else {
@@ -128,7 +128,7 @@ object SelfCheck {
         }
         items += Item("模型可用", modelOk, modelDetail)
 
-        // ④ 完整鏈路：真的用 SpeechRecognizer 調一次（能到 readyForSpeech 就算通）
+        // ④ 完整流程：真的用 SpeechRecognizer 呼叫一次（能到 readyForSpeech 就算通）
         onStage("測試完整流程（綁定 → 引擎 → 回呼）…")
         val chain = testChain(ctx)
         items += chain
@@ -138,9 +138,9 @@ object SelfCheck {
     }
 
     /**
-     * 用 `SpeechRecognizer` 真實繫結本服務，發起一次識別。
-     * 只要回撥走到 `onReadyForSpeech`，就說明**繫結 + 服務 + 引擎初始化**全通。
-     * 不給音訊，幾秒後主動取消 —— 目的是驗證鏈路，不是驗證識別內容。
+     * 用 `SpeechRecognizer` 真實繫結本服務，發起一次辨識。
+     * 只要回呼走到 `onReadyForSpeech`，就說明**繫結 + 服務 + 引擎初始化**全通。
+     * 不給音訊，幾秒後主動取消 —— 目的是驗證流程，不是驗證辨識內容。
      */
     private fun testChain(ctx: Context): Item {
         if (!SpeechRecognizer.isRecognitionAvailable(ctx)) {
@@ -179,7 +179,7 @@ object SelfCheck {
                     putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, true)
                 }
                 r.startListening(intent)
-                // 6 秒後無論如何都收工（驗證鏈路即可，不等識別內容）
+                // 6 秒後無論如何都結束（驗證流程即可，不等辨識內容）
                 handler.postDelayed({
                     runCatching { r.cancel() }
                     runCatching { r.destroy() }
@@ -216,13 +216,13 @@ object SelfCheck {
     const val ACTION_RECOGNITION_SERVICE = "android.speech.RecognitionService"
 
     /**
-     * 嘗試把本應用設為系統預設識別服務。
+     * 嘗試把本 App 設為系統預設辨識服務。
      *
-     * 普通應用**沒有** `WRITE_SECURE_SETTINGS` 許可權，正常寫不了這個鍵。
+     * 一般 App **沒有** `WRITE_SECURE_SETTINGS` 權限，正常寫不了這個鍵。
      * 三條路徑，按成功率排序：
-     *  ① 直接寫（已 root / 有許可權時可用）
+     *  ① 直接寫（已 root / 有權限時可用）
      *  ② 用 root 寫（`su -c settings put`）
-     *  ③ 都不行 → 返回 false，由介面引導使用者去系統設定（或改用呼叫方指定服務）
+     *  ③ 都不行 → 傳回 false，由介面引導使用者去系統設定（或改用呼叫方指定服務）
      *
      * @return 是否設定成功
      */
@@ -252,25 +252,25 @@ object SelfCheck {
     }.getOrDefault(false)
 
     /**
-     * 開啟系統「語音輸入」設定頁 —— **多路徑兜底**。
+     * 開啟系統「語音輸入」設定頁 —— **多路徑備援**。
      *
-     * 主人反饋「有些國產系統設定入口很亂，都找不到」。這裡按可靠性依次嘗試：
+     * 原作者回饋「有些中國廠商系統設定入口很亂，都找不到」。這裡按可靠性依次嘗試：
      *  ① 標準 `ACTION_VOICE_INPUT_SETTINGS`
-     *  ② 直接跳到「語言和輸入法」設定
-     *  ③ 直接跳到本應用的系統設定詳情頁（那裡至少能看到許可權）
+     *  ② 直接跳到「語言與輸入設定」頁
+     *  ③ 直接跳到本 App 的系統設定詳情頁（那裡至少能看到權限）
      * 每步都驗證"是否真的切走了"，全失敗才提示手動路徑。
      */
     fun openVoiceInputSettings(ctx: Context): Boolean {
         // ⚠️ 順序很重要（v0.3.1 修正）：
-        // 參考 Sayboard 的做法 —— 它用的是 **INPUT_METHOD_SETTINGS（語言和輸入法）**，
-        // 而不是 VOICE_INPUT_SETTINGS。原因：後者在**國產 ROM 上常被重定向到數字助理頁**
-        // （主人真機實測："開啟系統設定開啟的選項是數字助理應用"），根本設不了識別服務。
-        // 而「語言和輸入法」頁幾乎每個 ROM 都有，且裡面有語音輸入子項。
+        // 參考 Sayboard 的做法 —— 它用的是 **INPUT_METHOD_SETTINGS（語言與輸入設定）**，
+        // 而不是 VOICE_INPUT_SETTINGS。原因：後者在**中國廠商 ROM 上常被重新導向到數位助理頁**
+        // （原作者實機測試："開啟系統設定開啟的選項是數位助理應用程式"），根本設不了辨識服務。
+        // 而「語言與輸入設定」頁幾乎每個 ROM 都有，且裡面有語音輸入子選項。
         val candidates = listOf(
-            Intent(Settings.ACTION_INPUT_METHOD_SETTINGS),   // 語言和輸入法（首選）
+            Intent(Settings.ACTION_INPUT_METHOD_SETTINGS),   // 語言與輸入設定（首選）
             Intent("android.settings.INPUT_METHOD_SUBTYPE_SETTINGS"),
             Intent(Settings.ACTION_VOICE_INPUT_SETTINGS),    // 標準語音輸入頁（部分 ROM 可用）
-            Intent(Settings.ACTION_SETTINGS),                // 系統設定主頁兜底
+            Intent(Settings.ACTION_SETTINGS),                // 系統設定主頁（最後備援）
             Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
                 .setData(android.net.Uri.parse("package:${ctx.packageName}")),
         )

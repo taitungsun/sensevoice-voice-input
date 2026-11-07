@@ -2,10 +2,10 @@
 <!--
   主介面（簡潔版）。
 
-  設計原則（主人要求「弄得簡單一點，不需要明確標明是 DSH 專屬的」）：
+  設計原則（原作者要求「弄得簡單一點，不需要明確標明是 DSH 專屬的」）：
    · 四個卡片，一眼看完：狀態 / 模型 / 使用說明 / 設定
-   · 文案中立，面向任何使用方（不出現特定產品名）
-   · 去掉自檢等開發者向入口
+   · 文字中立，適用任何使用者（不出現特定產品名）
+   · 去掉自我檢查等給開發者的入口
 -->
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
@@ -69,7 +69,7 @@
                 android:textSize="13sp" />
         </LinearLayout>
 
-        <!-- ①.5 可用性檢測（v0.3.0）：一鍵驗證四層鏈路，並給出可操作的下一步 -->
+        <!-- ①.5 可用性檢查（v0.3.0）：一鍵驗證四層流程，並給出可操作的下一步 -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -94,8 +94,8 @@
                 android:textColor="@color/text_secondary"
                 android:textSize="12sp" />
 
-            <!-- 三個操作改為整行列表項（v0.4.0）：主人反饋三個按鈕並排會擠壓，
-                 改成擴充套件中心那種「圖示 + 標題 + 副標題 + 箭頭」的行，窄屏也不會擠。 -->
+            <!-- 三個操作改為整列清單項目（v0.4.0）：原作者回饋三個按鈕並排會擠壓，
+                 改成擴充功能中心那種「圖示 + 標題 + 副標題 + 箭頭」的行，窄螢幕也不會擠。 -->
             <LinearLayout
                 android:id="@+id/rowRunCheck"
                 android:layout_width="match_parent"

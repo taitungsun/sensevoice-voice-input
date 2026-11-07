@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  離線語音識別服務（系統級）。
+  離線語音辨識服務（系統級）。
 
-  ## 註冊方式照抄成熟開源專案
+  ## 註冊方式參照成熟的開源專案
   參考 `ElishaAz/Sayboard`（Vosk 語音鍵盤，活躍專案）的 AndroidManifest：
   它的 RecognitionService 宣告有四個關鍵點，本檔案全部對齊：
     ① android:exported="true"                     —— 系統要能繫結
     ② <category android:name="android.intent.category.DEFAULT" />  —— isDefault 標記
-    ③ android:foregroundServiceType="microphone"  —— 錄音型前臺服務
-    ④ android:permission="android.permission.RECORD_AUDIO"  —— 限定呼叫方需錄音許可權
-  另加 QUERY_ALL_PACKAGES：Sayboard 註釋明確說明，缺它時**呼叫方**會收到
-  ERROR_INSUFFICIENT_PERMISSIONS（即便呼叫方自己有錄音許可權）。
+    ③ android:foregroundServiceType="microphone"  —— 錄音型前景服務
+    ④ android:permission="android.permission.RECORD_AUDIO"  —— 限定呼叫方需錄音權限
+  另加 QUERY_ALL_PACKAGES：Sayboard 註解明確說明，缺它時**呼叫方**會收到
+  ERROR_INSUFFICIENT_PERMISSIONS（即便呼叫方自己有錄音權限）。
 -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
@@ -18,7 +18,7 @@
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <!-- Only used to download a model from HuggingFace (or hf-mirror.com); audio never leaves the phone. -->
     <uses-permission android:name="android.permission.INTERNET" />
-    <!-- 錄音型前臺服務（識別期間顯示狀態，避免被系統回收） -->
+    <!-- 錄音型前景服務（辨識期間顯示狀態，避免被系統回收） -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MICROPHONE" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
@@ -26,8 +26,8 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <!-- F21: buzz when recording starts -->
     <uses-permission android:name="android.permission.VIBRATE" />
-    <!-- 參考 Sayboard：識別服務的呼叫方若無法被查詢到，會拿到 ERROR_INSUFFICIENT_PERMISSIONS
-         （即使呼叫方自己有麥克風許可權）。宣告此項以確保跨應用呼叫正常。 -->
+    <!-- 參考 Sayboard：辨識服務的呼叫方若無法被查詢到，會拿到 ERROR_INSUFFICIENT_PERMISSIONS
+         （即使呼叫方自己有麥克風權限）。宣告此項以確保跨 App 呼叫正常。 -->
     <uses-permission
         android:name="android.permission.QUERY_ALL_PACKAGES"
         tools:ignore="QueryAllPackagesPermission" />
@@ -39,11 +39,11 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <!-- 主介面：**不顯示桌面圖示**（v0.5.0，主人要求改回外掛形態）。
+        <!-- 主介面：**不顯示桌面圖示**（v0.5.0，原作者要求改回外掛形式）。
              入口有兩個，都不需要 LAUNCHER：
-               · app.dsh.asr.OPEN —— 外部 App（如 DSH Mobile）用自定義 action 拉起
-               · 系統「語音輸入 → 識別服務 → 設定」頁（recognition_service.xml 引用 SettingsActivity）
-             這樣它就是一個純"系統識別服務提供者"，不佔桌面。 -->
+               · app.dsh.asr.OPEN —— 外部 App（如 DSH Mobile）用自訂 action 啟動
+               · 系統「語音輸入 → 辨識服務 → 設定」頁（recognition_service.xml 引用 SettingsActivity）
+             這樣它就是一個純"系統辨識服務提供者"，不佔桌面。 -->
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -64,7 +64,7 @@
             android:exported="false"
             android:label="@string/models_title" />
 
-        <!-- 系統「語音輸入 → 識別服務 → 設定」入口（recognition_service.xml 引用） -->
+        <!-- 系統「語音輸入 → 辨識服務 → 設定」入口（recognition_service.xml 引用） -->
         <activity
             android:name=".SettingsActivity"
             android:exported="true"
@@ -84,7 +84,7 @@
             </intent-filter>
         </receiver>
 
-        <!-- 系統識別服務。宣告要點見檔案頂部註釋（對齊 Sayboard）。 -->
+        <!-- 系統辨識服務。宣告要點見檔案頂部註解（對齊 Sayboard）。 -->
         <service
             android:name=".AsrRecognitionService"
             android:exported="true"

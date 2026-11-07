@@ -16,10 +16,10 @@ import android.speech.SpeechRecognizer
 import android.util.Log
 
 /**
- * 系統級離線語音識別服務。
+ * 系統級離線語音辨識服務。
  *
- * 任何應用透過 `android.speech.SpeechRecognizer`（預設識別服務）就能呼叫本服務，
- * 識別全程在本機完成（sherpa-onnx + 本地模型），不聯網、不上傳音訊。
+ * 任何 App 透過 `android.speech.SpeechRecognizer`（預設辨識服務）就能呼叫本服務，
+ * 辨識全程在本機完成（sherpa-onnx + 本機模型），不連網、不上傳音訊。
  */
 class AsrRecognitionService : RecognitionService() {
 
@@ -81,7 +81,7 @@ class AsrRecognitionService : RecognitionService() {
         stopListeningNotification()
     }
 
-    /** API 33+：告知呼叫方本服務支援的語言（已安裝=本地就緒的模型語言） */
+    /** API 33+：告知呼叫方本服務支援的語言（已安裝=本機就緒的模型語言） */
     override fun onCheckRecognitionSupport(recognizerIntent: Intent, supportCallback: SupportCallback) {
         val prefs = Prefs(this)
         val store = ModelStore(this)
@@ -102,7 +102,7 @@ class AsrRecognitionService : RecognitionService() {
         runCatching { supportCallback.onSupportResult(support) }
     }
 
-    /** 單會話：同時只允許一路識別，避免搶麥 */
+    /** 單工作階段：同時只允許一個辨識，避免搶麥克風 */
     override fun getMaxConcurrentSessionsCount(): Int = 1
 
     override fun onDestroy() {
@@ -168,9 +168,9 @@ class AsrRecognitionService : RecognitionService() {
     }
 
     /**
-     * 識別期間顯示狀態通知。
-     * 優先前臺服務；本應用刻意不申請 FOREGROUND_SERVICE（保持只有 RECORD_AUDIO + INTERNET），
-     * 在沒有該許可權的裝置上自動退化為普通通知。
+     * 辨識期間顯示狀態通知。
+     * 優先前景服務；本 App 刻意不申請 FOREGROUND_SERVICE（保持只有 RECORD_AUDIO + INTERNET），
+     * 在沒有該權限的裝置上自動改用一般通知。
      */
     private fun startListeningNotification(model: AsrModel) {
         val tap = PendingIntent.getActivity(
@@ -209,39 +209,39 @@ class AsrRecognitionService : RecognitionService() {
     }
 }
 
-/** 模型選擇策略（v0.4.1 修正優先順序，見 pick 註釋） */
+/** 模型選擇策略（v0.4.1 修正優先順序，見 pick 註解） */
 object ModelPicker {
 
     /**
      * 選模型。
      *
      * ## 修的是什麼（v0.4.1）
-     * 舊邏輯**只要預設模型語言匹配就直接返回**，於是"使用者把離線模型設成預設" →
-     * 流式偏好被完全跳過 → 識別不實時（主人反饋「感覺不夠實時」）。
-     * 實測日誌佐證：`model=paraformer-zh-small-int8`（離線）而非流式 zipformer。
+     * 舊邏輯**只要預設模型語言符合就直接傳回**，於是"使用者把離線模型設成預設" →
+     * 串流偏好被完全跳過 → 辨識不即時（原作者回饋「感覺不夠即時」）。
+     * 實測記錄佐證：`model=paraformer-zh-small-int8`（離線）而非串流 zipformer。
      *
      * ## 新優先順序
-     *  ① 預設模型**本身就是流式** → 用它（尊重使用者顯式選擇）
-     *  ② 開啟了"串流優先" → 語言匹配的流式模型優先（實時性優先）
-     *  ③ 預設模型（語言匹配）→ ④ 推薦 → 第一個
+     *  ① 預設模型**本身就是串流** → 用它（尊重使用者明確選擇）
+     *  ② 開啟了"串流優先" → 語言符合的串流模型優先（即時性優先）
+     *  ③ 預設模型（語言符合）→ ④ 推薦 → 第一個
      */
     fun pick(prefs: Prefs, store: ModelStore, langHint: String): AsrModel? {
         val ready = store.readyModels()
         if (ready.isEmpty()) return null
         val preferred = prefs.defaultModel()?.takeIf { m -> ready.any { it.id == m.id } }
 
-        // ① 預設模型就是流式 → 直接用
+        // ① 預設模型就是串流 → 直接用
         if (preferred != null && preferred.streaming &&
             (langHint == "auto" || matches(preferred, langHint))
         ) return preferred
 
-        // ② 開了流式優先 → 語言匹配的流式模型優先（治"不實時"）
+        // ② 開了串流優先 → 語言符合的串流模型優先（解決"不即時"）
         if (prefs.preferStreaming) {
             val pool = ready.filter { matches(it, langHint) }.ifEmpty { ready }
             pool.firstOrNull { it.streaming }?.let { return it }
         }
 
-        // ③ 預設模型（語言匹配）
+        // ③ 預設模型（語言符合）
         if (preferred != null && (langHint == "auto" || matches(preferred, langHint))) return preferred
         val langPool = ready.filter { matches(it, langHint) }.ifEmpty { ready }
         if (preferred != null && langPool.any { it.id == preferred.id }) return preferred
@@ -255,7 +255,7 @@ object ModelPicker {
     }
 }
 
-/** 通知小工具（模型缺失提醒等） */
+/** 通知小工具（模型缺少提醒等） */
 object Notifications {
 
     private const val CHANNEL_MODEL = "dsh_asr_model"

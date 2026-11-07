@@ -52,7 +52,7 @@
                 android:orientation="vertical" />
         </LinearLayout>
 
-        <!-- 識別語言 -->
+        <!-- 辨識語言 -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -99,7 +99,7 @@
             </RadioGroup>
         </LinearLayout>
 
-        <!-- 模型下載源（v0.5.0）：預設跟隨介面語言，可手動覆蓋 -->
+        <!-- 模型下載來源（v0.5.0）：預設跟隨介面語言，可手動覆蓋 -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -154,7 +154,7 @@
             </RadioGroup>
         </LinearLayout>
 
-        <!-- 流式偏好 + 端點引數 -->
+        <!-- 串流偏好 + 端點參數 -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
