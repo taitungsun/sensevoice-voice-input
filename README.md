@@ -13,7 +13,6 @@
 - 中文與英文切換不必重新載入模型；英文輸出改為一般大小寫（原本全為大寫）
 - 開始錄音時短震動，提示可以開始說話
 - 使用 4 個執行緒解碼，錄音期間不做即時預覽，讓結果更快出來
-- 介面文字改為繁體中文（台灣用語）
 - 預設模型為官方原版 SenseVoice Small（2024-07-17）；另可選粵語微調版（WSYue）
 - 系統語言為繁體中文時，直接從 HuggingFace 下載模型（不使用中國鏡像站）
 - 獨立的套件名稱 `io.github.taitungsun.sensevoice`，可與原專案同時安裝
@@ -93,7 +92,7 @@ bf:f0:94:b6:2c:5f:55:c5:11:fa:5f:af:c0:77:33:54:4a:ed:b3:05:4c:4c:8f:61:33:b1:05
 
 Offline voice input for Android, built on SenseVoice. It registers as the system speech recognition service, so the voice key of keyboards such as TT9 can use it. Audio is processed on the phone and never uploaded.
 
-Forked from [Soodok/dsh-asr-service](https://github.com/Soodok/dsh-asr-service) and tuned for low-end keypad phones such as the Qin F21 Pro (MT6761). Changes: Traditional Chinese output with Taiwan character forms (words are not replaced), spoken punctuation in Chinese and English, no automatic full stop at the end of each sentence, the model stays loaded in memory (about 300 MB RAM), instant switching between Chinese and English, normal English casing, a short vibration when recording starts, Traditional Chinese UI, and its own package ID.
+Forked from [Soodok/dsh-asr-service](https://github.com/Soodok/dsh-asr-service) and tuned for low-end keypad phones such as the Qin F21 Pro (MT6761). Changes: Traditional Chinese output with Taiwan character forms (words are not replaced), spoken punctuation in Chinese and English, no automatic full stop at the end of each sentence, the model stays loaded in memory (about 300 MB RAM), instant switching between Chinese and English, normal English casing, a short vibration when recording starts, and its own package ID.
 
 On the F21 Pro a sentence takes about 1–2 s after you stop speaking, compared with 8–12 s for whisperIME.
 
