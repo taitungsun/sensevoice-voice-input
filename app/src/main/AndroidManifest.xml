@@ -5,7 +5,7 @@
   ## 註冊方式參照成熟的開源專案
   參考 `ElishaAz/Sayboard`（Vosk 語音鍵盤，活躍專案）的 AndroidManifest：
   它的 RecognitionService 宣告有四個關鍵點，本檔案全部對齊：
-    ① android:exported="true"                     —— 系統要能繫結
+    ① android:exported="true"                     —— 系統要能綁定
     ② <category android:name="android.intent.category.DEFAULT" />  —— isDefault 標記
     ③ android:foregroundServiceType="microphone"  —— 錄音型前景服務
     ④ android:permission="android.permission.RECORD_AUDIO"  —— 限定呼叫方需錄音權限

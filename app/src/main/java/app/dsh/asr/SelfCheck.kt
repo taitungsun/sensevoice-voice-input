@@ -29,9 +29,9 @@ import java.util.concurrent.TimeUnit
  * 本類逐層檢查並給出**明確結論 + 下一步該怎麼辦**，把摸不著頭緒的問題變成可操作的步驟。
  *
  * ## 第 ④ 項怎麼在沒有麥克風時也能驗
- * 用 `SpeechRecognizer` 真實繫結本服務並發起一次辨識（不送入音訊），
- * 只要走到 `onReadyForSpeech` 就證明**繫結 + 服務 + 引擎初始化**整條流程通了；
- * 逾時/錯誤也能區分是哪一環（如 ERROR_CLIENT = 繫結失敗、ERROR_AUDIO = 錄音打不開）。
+ * 用 `SpeechRecognizer` 真實綁定本服務並發起一次辨識（不送入音訊），
+ * 只要走到 `onReadyForSpeech` 就證明**綁定 + 服務 + 引擎初始化**整條流程通了；
+ * 逾時/錯誤也能區分是哪一環（如 ERROR_CLIENT = 綁定失敗、ERROR_AUDIO = 錄音打不開）。
  */
 object SelfCheck {
 
@@ -138,8 +138,8 @@ object SelfCheck {
     }
 
     /**
-     * 用 `SpeechRecognizer` 真實繫結本服務，發起一次辨識。
-     * 只要回呼走到 `onReadyForSpeech`，就說明**繫結 + 服務 + 引擎初始化**全通。
+     * 用 `SpeechRecognizer` 真實綁定本服務，發起一次辨識。
+     * 只要回呼走到 `onReadyForSpeech`，就說明**綁定 + 服務 + 引擎初始化**全通。
      * 不給音訊，幾秒後主動取消 —— 目的是驗證流程，不是驗證辨識內容。
      */
     private fun testChain(ctx: Context): Item {
