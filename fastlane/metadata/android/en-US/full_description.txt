@@ -1,0 +1,27 @@
+Offline speech-to-text: recognition runs entirely on the phone, and neither audio nor text ever leaves it. The network is needed only once, to download the model. After installation the app becomes Android's system speech recognition service, so you can dictate by pressing the voice key of a keyboard such as TT9.
+
+Forked from Soodok/dsh-asr-service and optimized for low-end keypad phones such as the Qin F21 Pro; every screen works with the D-pad. It also works on other arm64 phones with Android 8.0 or later. The app's own screens are in Traditional Chinese.
+
+Made for seniors and anyone who finds typing hard: no need to learn Zhuyin or stroke input, just press one key and speak. The app uses large, high-contrast text and works with the TalkBack screen reader.
+
+<b>Features</b>
+<ul>
+<li>Speak Mandarin and get Traditional Chinese text (Taiwan character forms), or speak English. Your words are kept as spoken, never swapped for other vocabulary</li>
+<li>Spoken punctuation: say 逗號, 句號, 問號, 換行 and more in Chinese, or comma, period, question mark, new line and more in English</li>
+<li>No automatic full stop at the end of each sentence; say 句號 or "period" when you want one</li>
+<li>Fast: about 1–2 s after you stop speaking on a Qin F21 Pro (MT6761)</li>
+<li>The model stays loaded in memory (about 300 MB), so no reload per sentence and no CPU use while idle</li>
+<li>A short vibration when recording starts, so you know when to speak</li>
+</ul>
+
+<b>Before first use</b>
+<ul>
+<li>Open the app, go to 「辨識模型」 (models) and download SenseVoice Small (239 MB; Wi-Fi recommended)</li>
+<li>Select the app under Settings → System → Languages &amp; input → Voice input</li>
+<li>With TT9, the keyboard itself also needs microphone permission</li>
+</ul>
+
+<b>Privacy</b>
+No ads, and no usage data is collected or sent. The network is used only to download the speech model from HuggingFace; you can turn off the app's network access afterwards without affecting use.
+
+The SenseVoice Small model is released by FunAudioLLM (Alibaba Group) under the FunASR Model License and is not included in the APK. Recognition engine: sherpa-onnx.

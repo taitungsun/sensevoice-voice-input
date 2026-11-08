@@ -66,6 +66,7 @@ class SettingsActivity : Activity() {
         sbSilence.progress = ((prefs.silenceMs - 400) / 100).coerceIn(0, 26)
         fun showSilence() {
             tvSilence.text = getString(R.string.settings_silence, String.format(Locale.US, "%.1f", prefs.silenceMs / 1000f))
+            describe(sbSilence, tvSilence.text)
         }
         showSilence()
         sbSilence.setOnSeekBarChangeListener(object : SimpleSeekListener() {
@@ -81,6 +82,7 @@ class SettingsActivity : Activity() {
         sbMaxLen.progress = ((prefs.maxUtteranceMs - 10_000) / 5_000).coerceIn(0, 11)
         fun showMaxLen() {
             tvMaxLen.text = getString(R.string.settings_maxlen, (prefs.maxUtteranceMs / 1000).toString())
+            describe(sbMaxLen, tvMaxLen.text)
         }
         showMaxLen()
         sbMaxLen.setOnSeekBarChangeListener(object : SimpleSeekListener() {
@@ -96,6 +98,7 @@ class SettingsActivity : Activity() {
         sbNoSpeech.progress = (prefs.noSpeechTimeoutMs / 1000 - 3).coerceIn(0, 17)
         fun showNoSpeech() {
             tvNoSpeech.text = getString(R.string.settings_nospeech, (prefs.noSpeechTimeoutMs / 1000).toString())
+            describe(sbNoSpeech, tvNoSpeech.text)
         }
         showNoSpeech()
         sbNoSpeech.setOnSeekBarChangeListener(object : SimpleSeekListener() {
@@ -127,6 +130,15 @@ class SettingsActivity : Activity() {
             append('\n')
             append(getString(R.string.settings_models_used, ModelCatalog.human(used)))
         }
+    }
+
+    /** 讓 TalkBack 念出「靜音判定：1.2 秒」，而不是只念百分比 */
+    private fun describe(sb: SeekBar, label: CharSequence) {
+        val name = label.toString().substringBefore('：')
+        val value = label.toString().substringAfter('：')
+        sb.contentDescription = name
+        if (android.os.Build.VERSION.SDK_INT >= 30) sb.stateDescription = value
+        else sb.contentDescription = label
     }
 
     private open class SimpleSeekListener : SeekBar.OnSeekBarChangeListener {

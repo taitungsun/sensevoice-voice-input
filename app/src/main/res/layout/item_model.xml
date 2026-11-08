@@ -19,7 +19,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:textColor="@color/text_primary"
-            android:textSize="16sp"
+            android:textSize="18sp"
             android:textStyle="bold" />
 
         <TextView
@@ -32,7 +32,7 @@
             android:paddingEnd="10dp"
             android:paddingBottom="3dp"
             android:textColor="@color/accent"
-            android:textSize="11sp" />
+            android:textSize="14sp" />
     </LinearLayout>
 
     <TextView
@@ -42,7 +42,7 @@
         android:layout_marginTop="6dp"
         android:lineSpacingExtra="3dp"
         android:textColor="@color/text_secondary"
-        android:textSize="12sp" />
+        android:textSize="14sp" />
 
     <TextView
         android:id="@+id/tvState"
@@ -50,7 +50,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:textColor="@color/accent"
-        android:textSize="13sp" />
+        android:textSize="15sp" />
 
     <ProgressBar
         android:id="@+id/progress"
@@ -82,7 +82,7 @@
             android:paddingBottom="10dp"
             android:text="@string/btn_download"
             android:textColor="#FF0B1116"
-            android:textSize="14sp"
+            android:textSize="16sp"
             android:textStyle="bold" />
 
         <TextView
@@ -99,6 +99,6 @@
             android:paddingBottom="10dp"
             android:text="@string/btn_delete"
             android:textColor="@color/text_primary"
-            android:textSize="14sp" />
+            android:textSize="16sp" />
     </LinearLayout>
 </LinearLayout>

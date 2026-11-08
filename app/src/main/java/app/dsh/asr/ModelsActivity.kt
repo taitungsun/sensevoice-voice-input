@@ -168,10 +168,12 @@ class ModelsActivity : Activity(), DownloadBus.Listener {
                 state == ModelState.PARTIAL -> "繼續下載"
                 else -> getString(R.string.btn_download)
             }
+            btnDownload.contentDescription = getString(R.string.a11y_download, btnDownload.text, model.name)
             btnDownload.setOnClickListener { onDownload(model) }
 
             val btnDelete = view.findViewById<TextView>(R.id.btnDelete)
             btnDelete.alpha = if (state == ModelState.MISSING) 0.4f else 1f
+            btnDelete.contentDescription = getString(R.string.a11y_download, btnDelete.text, model.name)
             btnDelete.setOnClickListener {
                 if (state == ModelState.MISSING) Ui.toast(ctx, "本機沒有這個模型")
                 else onDelete(model)

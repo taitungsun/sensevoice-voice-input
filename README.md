@@ -2,7 +2,7 @@
 
 離線語音轉文字：辨識全程在手機上完成，語音與文字都不會外傳，只有第一次下載模型時需要網路。安裝後即成為 Android 的系統語音辨識服務，在 TT9 等輸入法按下語音鍵就能使用。
 
-本專案改編自 [Soodok/dsh-asr-service](https://github.com/Soodok/dsh-asr-service)，針對 Qin F21 Pro 等效能較低的按鍵手機最佳化，也適用於 Android 8.0 以上、arm64 架構的手機。
+本專案改編自 [Soodok/dsh-asr-service](https://github.com/Soodok/dsh-asr-service)，針對 Qin F21 Pro 等效能較低的按鍵手機最佳化，適合長輩與不方便打字的人使用（字體大、可完全用按鍵操作、支援 TalkBack），也適用於 Android 8.0 以上、arm64 架構的手機。
 
 ## 與原專案的差異
 
@@ -92,7 +92,7 @@ bf:f0:94:b6:2c:5f:55:c5:11:fa:5f:af:c0:77:33:54:4a:ed:b3:05:4c:4c:8f:61:33:b1:05
 
 Offline speech-to-text: recognition runs entirely on the phone, and neither audio nor text ever leaves it. The network is needed only once, to download the model. After installation the app becomes Android's system speech recognition service, so you can dictate by pressing the voice key of a keyboard such as TT9. Speak Mandarin and get Traditional Chinese text, or speak English.
 
-Forked from [Soodok/dsh-asr-service](https://github.com/Soodok/dsh-asr-service) and optimized for low-end keypad phones such as the Qin F21 Pro. It also works on other arm64 phones with Android 8.0 or later. The app's own screens are in Traditional Chinese.
+Forked from [Soodok/dsh-asr-service](https://github.com/Soodok/dsh-asr-service) and optimized for low-end keypad phones such as the Qin F21 Pro, and for seniors and anyone who finds typing hard (large text, full keypad navigation, TalkBack support). It also works on other arm64 phones with Android 8.0 or later. The app's own screens are in Traditional Chinese.
 
 ### Changes from the original project
 

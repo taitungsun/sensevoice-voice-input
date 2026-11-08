@@ -13,6 +13,10 @@ This product includes or uses:
   STCharacters.txt, STPhrases.txt, TWVariants.txt in
   app/src/main/assets/opencc/. Apache License 2.0.
 
+- Noto Sans TC Bold (https://github.com/notofonts/noto-cjk)
+  The character in the app icon is drawn from this font.
+  SIL Open Font License 1.1.
+
 Speech models are NOT included in this repository or in the APK. The app
 downloads them from HuggingFace on request:
 

@@ -23,8 +23,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/main_title"
+            android:accessibilityHeading="true"
             android:textColor="@color/text_primary"
-            android:textSize="24sp"
+            android:textSize="26sp"
             android:textStyle="bold" />
 
         <TextView
@@ -33,7 +34,7 @@
             android:layout_marginTop="4dp"
             android:text="@string/main_subtitle"
             android:textColor="@color/text_secondary"
-            android:textSize="13sp" />
+            android:textSize="15sp" />
 
         <!-- ① 狀態 -->
         <LinearLayout
@@ -48,17 +49,19 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/card_status"
+            android:accessibilityHeading="true"
                 android:textColor="@color/accent"
-                android:textSize="13sp"
+                android:textSize="15sp"
                 android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/tvServiceState"
+                android:accessibilityLiveRegion="polite"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:textColor="@color/text_primary"
-                android:textSize="14sp" />
+                android:textSize="16sp" />
 
             <TextView
                 android:id="@+id/tvModelState"
@@ -66,7 +69,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="6dp"
                 android:textColor="@color/text_secondary"
-                android:textSize="13sp" />
+                android:textSize="15sp" />
         </LinearLayout>
 
         <!-- ①.5 可用性檢查（v0.3.0）：一鍵驗證四層流程，並給出可操作的下一步 -->
@@ -82,8 +85,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/card_check"
+            android:accessibilityHeading="true"
                 android:textColor="@color/accent"
-                android:textSize="13sp"
+                android:textSize="15sp"
                 android:textStyle="bold" />
 
             <TextView
@@ -92,7 +96,7 @@
                 android:layout_marginTop="6dp"
                 android:text="@string/check_hint"
                 android:textColor="@color/text_secondary"
-                android:textSize="12sp" />
+                android:textSize="14sp" />
 
             <!-- 操作改為整列清單項目（v0.4.0）：原作者回饋按鈕並排會擠壓，
                  改成擴充功能中心那種「圖示 + 標題 + 副標題 + 箭頭」的行，窄螢幕也不會擠。 -->
@@ -116,6 +120,7 @@
                     android:layout_height="36dp"
                     android:padding="8dp"
                     android:src="@drawable/ic_check"
+                    android:importantForAccessibility="no"
                     android:background="@drawable/bg_icon_chip_soft"
                     android:tint="@color/accent" />
 
@@ -131,7 +136,7 @@
                         android:layout_height="wrap_content"
                         android:text="@string/btn_run_check"
                         android:textColor="@color/text_primary"
-                        android:textSize="15sp" />
+                        android:textSize="17sp" />
 
                     <TextView
                         android:layout_width="match_parent"
@@ -139,15 +144,16 @@
                         android:layout_marginTop="2dp"
                         android:text="@string/row_check_sub"
                         android:textColor="@color/text_secondary"
-                        android:textSize="12sp" />
+                        android:textSize="14sp" />
                 </LinearLayout>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="›"
+                    android:importantForAccessibility="no"
                     android:textColor="@color/text_secondary"
-                    android:textSize="18sp" />
+                    android:textSize="20sp" />
             </LinearLayout>
 
             <View
@@ -173,6 +179,7 @@
                     android:layout_height="36dp"
                     android:padding="8dp"
                     android:src="@drawable/ic_settings"
+                    android:importantForAccessibility="no"
                     android:background="@drawable/bg_icon_chip_soft"
                     android:tint="@color/warn" />
 
@@ -188,7 +195,7 @@
                         android:layout_height="wrap_content"
                         android:text="@string/btn_open_settings"
                         android:textColor="@color/text_primary"
-                        android:textSize="15sp" />
+                        android:textSize="17sp" />
 
                     <TextView
                         android:layout_width="match_parent"
@@ -196,24 +203,26 @@
                         android:layout_marginTop="2dp"
                         android:text="@string/row_settings_sub"
                         android:textColor="@color/text_secondary"
-                        android:textSize="12sp" />
+                        android:textSize="14sp" />
                 </LinearLayout>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="›"
+                    android:importantForAccessibility="no"
                     android:textColor="@color/text_secondary"
-                    android:textSize="18sp" />
+                    android:textSize="20sp" />
             </LinearLayout>
 
             <TextView
                 android:id="@+id/tvCheckResult"
+                android:accessibilityLiveRegion="polite"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:textColor="@color/text_primary"
-                android:textSize="13sp"
+                android:textSize="15sp"
                 android:lineSpacingExtra="4dp"
                 android:visibility="gone" />
         </LinearLayout>
@@ -242,7 +251,7 @@
                     android:layout_height="wrap_content"
                     android:text="@string/card_models"
                     android:textColor="@color/text_primary"
-                    android:textSize="16sp" />
+                    android:textSize="18sp" />
 
                 <TextView
                     android:layout_width="match_parent"
@@ -250,15 +259,16 @@
                     android:layout_marginTop="2dp"
                     android:text="@string/card_models_sub"
                     android:textColor="@color/text_secondary"
-                    android:textSize="12sp" />
+                    android:textSize="14sp" />
             </LinearLayout>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="›"
+                    android:importantForAccessibility="no"
                 android:textColor="@color/text_secondary"
-                android:textSize="20sp" />
+                android:textSize="22sp" />
         </LinearLayout>
 
         <!-- ③ 使用說明 -->
@@ -274,8 +284,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/card_usage"
+            android:accessibilityHeading="true"
                 android:textColor="@color/accent"
-                android:textSize="13sp"
+                android:textSize="15sp"
                 android:textStyle="bold" />
 
             <TextView
@@ -284,7 +295,7 @@
                 android:layout_marginTop="8dp"
                 android:text="@string/main_footer"
                 android:textColor="@color/text_secondary"
-                android:textSize="12sp"
+                android:textSize="14sp"
                 android:lineSpacingExtra="4dp" />
         </LinearLayout>
 
@@ -312,7 +323,7 @@
                     android:layout_height="wrap_content"
                     android:text="@string/card_settings"
                     android:textColor="@color/text_primary"
-                    android:textSize="16sp" />
+                    android:textSize="18sp" />
 
                 <TextView
                     android:layout_width="match_parent"
@@ -320,15 +331,16 @@
                     android:layout_marginTop="2dp"
                     android:text="@string/card_settings_sub"
                     android:textColor="@color/text_secondary"
-                    android:textSize="12sp" />
+                    android:textSize="14sp" />
             </LinearLayout>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="›"
+                    android:importantForAccessibility="no"
                 android:textColor="@color/text_secondary"
-                android:textSize="20sp" />
+                android:textSize="22sp" />
         </LinearLayout>
 
     </LinearLayout>

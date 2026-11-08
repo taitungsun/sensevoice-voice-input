@@ -2,7 +2,6 @@ package app.dsh.asr
 
 import android.Manifest
 import android.app.Activity
-import android.content.ComponentName
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
@@ -58,47 +57,44 @@ class MainActivity : Activity(), DownloadBus.Listener {
 
     // ------------------------------------------------------------------ 狀態
 
+    /**
+     * 狀態卡只講結論：「可以使用」或「還差哪幾步」。
+     * 服務註冊、系統可見服務數這類細節留給「可用性檢查」。
+     */
     private fun refreshStatus() {
-        val mine = ComponentName(this, AsrRecognitionService::class.java)
-
-        val declared = runCatching {
-            @Suppress("DEPRECATION")
-            packageManager.getPackageInfo(packageName, PackageManager.GET_SERVICES)
-        }.getOrNull()?.services?.any { it.name == AsrRecognitionService::class.java.name } == true
-
-        val allServices = runCatching {
-            @Suppress("DEPRECATION")
-            packageManager.queryIntentServices(Intent(RecognitionServiceAction), 0)
-        }.getOrDefault(emptyList())
-        val mineIndex = allServices.indexOfFirst { it.serviceInfo.name == mine.className }
-
-        val current = Settings.Secure.getString(contentResolver, "voice_recognition_service").orEmpty()
-        val isDefault = current.startsWith(packageName)
-
-        tvServiceState.text = buildString {
-            append(if (declared) "服務註冊：已宣告 RecognitionService ✓\n" else "服務註冊：未在清單中找到 ✗\n")
-            append("系統可見辨識服務：${allServices.size} 個")
-            if (mineIndex >= 0) append("（本 App 在清單中 ✓）") else append("（本 App 未被系統列出 ✗）")
-            append("\n")
-            append(
-                if (isDefault) "系統預設辨識服務：本 App ✓（其他 App 直接呼叫即可）"
-                else "系統預設辨識服務：${if (current.isBlank()) "未設定" else current}"
-            )
-        }
-        tvServiceState.setTextColor(Ui.statusColor(declared && mineIndex >= 0, warn = declared))
-
         val prefs = Prefs(this)
         val store = ModelStore(this)
         val ready = store.readyModels()
         val def = prefs.defaultModel()
+
+        val current = Settings.Secure.getString(contentResolver, "voice_recognition_service").orEmpty()
+        val isDefault = current.startsWith(packageName)
+        val micOk = checkSelfPermission(Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED
+
+        val todo = buildList {
+            if (ready.isEmpty()) add("到「辨識模型」下載模型")
+            if (!isDefault) add("到系統設定選擇本 App 為語音輸入")
+            if (!micOk) add("允許麥克風權限")
+        }
+        tvServiceState.text =
+            if (todo.isEmpty()) "✓ 可以使用"
+            else "尚未完成：\n" + todo.joinToString("\n") { "· $it" }
+        tvServiceState.setTextColor(if (todo.isEmpty()) Ui.OK else Ui.WARN)
+
         val used = ModelCatalog.MODELS.sumOf { store.storedBytes(it) }
         tvModelState.text = buildString {
-            append("預設模型：${def?.name ?: "-"}（${def?.let { ModelCatalog.human(it.totalBytes) } ?: "-"}）\n")
-            append("已就緒模型：${if (ready.isEmpty()) "無（先去模型管理下載）" else ready.joinToString("、") { it.name }}\n")
-            append("已佔用空間：${ModelCatalog.human(used)}\n")
-            append("語言偏好：${prefs.language}")
+            append("模型：${def?.name ?: "-"}")
+            append(if (def != null && def in ready) "（已就緒）\n" else "（未下載）\n")
+            append("辨識語言：${langLabel(prefs.language)}\n")
+            append("已佔用空間：${ModelCatalog.human(used)}")
         }
-        tvModelState.setTextColor(Ui.statusColor(ready.isNotEmpty(), warn = ready.isEmpty()))
+        tvModelState.setTextColor(Ui.TEXT_DIM)
+    }
+
+    private fun langLabel(code: String): String = when (code) {
+        "zh" -> getString(R.string.lang_zh)
+        "en" -> getString(R.string.lang_en)
+        else -> getString(R.string.lang_auto)
     }
 
     // ------------------------------------------------------------------ 可用性檢查
@@ -157,7 +153,4 @@ class MainActivity : Activity(), DownloadBus.Listener {
         refreshStatus()
     }
 
-    companion object {
-        private const val RecognitionServiceAction = "android.speech.RecognitionService"
-    }
 }

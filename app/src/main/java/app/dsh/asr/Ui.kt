@@ -15,7 +15,7 @@ object Ui {
     const val STROKE = 0xFF262D35.toInt()
     const val ACCENT = 0xFF7DD3FC.toInt()
     const val TEXT = 0xFFE6EDF3.toInt()
-    const val TEXT_DIM = 0xFF8A94A3.toInt()
+    const val TEXT_DIM = 0xFFB4BECB.toInt()
     const val OK = 0xFF7EE787.toInt()
     const val WARN = 0xFFF2CC60.toInt()
     const val ERR = 0xFFFF7B72.toInt()

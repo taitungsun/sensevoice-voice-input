@@ -1,14 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- 圖示：「語」兩側聲波（繁體，Noto Sans TC Bold 字形，SIL OFL 1.1）。由 tools/make_icon.py 產生 -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="108dp"
     android:height="108dp"
     android:viewportWidth="108"
     android:viewportHeight="108">
-    <!-- 簡筆麥克風 + 聲波 -->
-    <path
-        android:fillColor="#7DD3FC"
-        android:pathData="M54,30c-4.42,0 -8,3.58 -8,8v14c0,4.42 3.58,8 8,8s8,-3.58 8,-8V38c0,-4.42 -3.58,-8 -8,-8z" />
-    <path
-        android:fillColor="#7DD3FC"
-        android:pathData="M70,50v2c0,8.84 -7.16,16 -16,16s-16,-7.16 -16,-16v-2h-4v2c0,10.5 8.14,19.14 18.4,19.94V78h-8.4v4h20v-4h-8.4v-6.06C65.86,71.14 74,62.5 74,52v-2z" />
+    <path android:strokeColor="#7DD3FC" android:strokeWidth="3.4" android:strokeLineCap="round" android:pathData="M24.50,51.20 V56.80 M30.50,47.20 V60.80 M77.50,47.20 V60.80 M83.50,51.20 V56.80" />
+    <path android:fillColor="#FFFFFF" android:pathData="M36.89 47.48V51.1H49.29V47.48ZM36.89 52.91V56.58H49.29V52.91ZM39.51 36.77C40.39 38.3 41.48 40.35 42.08 41.84H35.12V45.67H50.74V41.84H43.53L46.19 40.39C45.59 38.9 44.34 36.69 43.21 35ZM36.77 58.51V72.44H40.88V70.75H49.53V58.51ZM40.88 62.33H45.39V66.88H40.88ZM52.11 57.82V73H56.58V71.55H66V72.84H70.67V57.82ZM56.58 67.4V62.01H66V67.4ZM52.07 43.61V47.52H55.73L54.85 51.95H50.06V55.89H72.88V51.95H69.46V43.61H61.08L61.57 40.64H71.83V36.69H51.1V40.64H56.82L56.38 43.61ZM64.99 51.95H59.51L60.36 47.52H64.99Z" />
 </vector>

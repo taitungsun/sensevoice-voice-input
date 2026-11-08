@@ -15,8 +15,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/settings_title"
+            android:accessibilityHeading="true"
             android:textColor="@color/text_primary"
-            android:textSize="22sp"
+            android:textSize="24sp"
             android:textStyle="bold" />
 
         <!-- 辨識語言 -->
@@ -32,8 +33,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/settings_language"
+            android:accessibilityHeading="true"
                 android:textColor="@color/accent"
-                android:textSize="13sp"
+                android:textSize="15sp"
                 android:textStyle="bold" />
 
             <RadioGroup
@@ -50,7 +52,7 @@
                     android:textColor="@color/text_primary"
                     android:background="@drawable/bg_focus_row"
                     android:paddingVertical="6dp"
-                    android:textSize="14sp" />
+                    android:textSize="16sp" />
                 <RadioButton
                     android:id="@+id/rbZh"
                     android:layout_width="match_parent"
@@ -59,7 +61,7 @@
                     android:textColor="@color/text_primary"
                     android:background="@drawable/bg_focus_row"
                     android:paddingVertical="6dp"
-                    android:textSize="14sp" />
+                    android:textSize="16sp" />
                 <RadioButton
                     android:id="@+id/rbEn"
                     android:layout_width="match_parent"
@@ -68,7 +70,7 @@
                     android:textColor="@color/text_primary"
                     android:background="@drawable/bg_focus_row"
                     android:paddingVertical="6dp"
-                    android:textSize="14sp" />
+                    android:textSize="16sp" />
             </RadioGroup>
         </LinearLayout>
 
@@ -83,11 +85,12 @@
 
             <TextView
                 android:id="@+id/tvSilence"
+                android:labelFor="@id/sbSilence"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="14dp"
                 android:textColor="@color/text_primary"
-                android:textSize="14sp" />
+                android:textSize="16sp" />
 
             <SeekBar
                 android:id="@+id/sbSilence"
@@ -103,15 +106,16 @@
                 android:layout_height="wrap_content"
                 android:text="@string/settings_silence_hint"
                 android:textColor="@color/text_secondary"
-                android:textSize="12sp" />
+                android:textSize="14sp" />
 
             <TextView
                 android:id="@+id/tvMaxLen"
+                android:labelFor="@id/sbMaxLen"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="14dp"
                 android:textColor="@color/text_primary"
-                android:textSize="14sp" />
+                android:textSize="16sp" />
 
             <SeekBar
                 android:id="@+id/sbMaxLen"
@@ -124,11 +128,12 @@
 
             <TextView
                 android:id="@+id/tvNoSpeech"
+                android:labelFor="@id/sbNoSpeech"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="14dp"
                 android:textColor="@color/text_primary"
-                android:textSize="14sp" />
+                android:textSize="16sp" />
 
             <SeekBar
                 android:id="@+id/sbNoSpeech"
@@ -153,8 +158,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/settings_service_info"
+            android:accessibilityHeading="true"
                 android:textColor="@color/accent"
-                android:textSize="13sp"
+                android:textSize="15sp"
                 android:textStyle="bold" />
 
             <TextView
@@ -164,7 +170,7 @@
                 android:layout_marginTop="10dp"
                 android:lineSpacingExtra="4dp"
                 android:textColor="@color/text_secondary"
-                android:textSize="12sp" />
+                android:textSize="14sp" />
 
             <TextView
                 android:id="@+id/btnOpenModels"
@@ -179,7 +185,7 @@
                 android:paddingBottom="11dp"
                 android:text="@string/btn_open_models"
                 android:textColor="@color/text_primary"
-                android:textSize="14sp" />
+                android:textSize="16sp" />
         </LinearLayout>
     </LinearLayout>
 </ScrollView>

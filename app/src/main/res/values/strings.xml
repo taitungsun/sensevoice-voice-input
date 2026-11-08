@@ -11,7 +11,7 @@
     <string name="notif_nomodel_title">離線辨識模型未就緒</string>
     <string name="notif_nomodel_text">點選進入模型管理，下載模型後即可使用</string>
 
-    <string name="main_title">離線語音辨識</string>
+    <string name="main_title">SenseVoice 語音輸入</string>
     <string name="main_subtitle">離線語音轉文字 · 語音不離開手機</string>
     <string name="card_status">狀態</string>
     <string name="card_models">辨識模型</string>
@@ -27,10 +27,7 @@
     <string name="btn_open_settings">開啟系統設定</string>
     <string name="check_running">正在檢查…</string>
     <string name="check_open_fail">沒找到系統設定入口。可手動前往：系統設定 → 語言與輸入設定 → 語音輸入</string>
-    <string name="main_footer">用法：
-1. 先到「辨識模型」下載模型
-2. 開啟系統設定 → 語言與輸入設定 → 語音輸入，選擇本 App
-3. 在輸入法（例如 TT9）按語音鍵即可使用</string>
+    <string name="main_footer">1. 到「辨識模型」下載模型\n2. 開啟系統設定 → 語言與輸入設定 → 語音輸入，選擇本 App\n3. 在輸入法（例如 TT9）按語音鍵即可使用</string>
 
     <string name="models_title">模型管理</string>
     <string name="models_subtitle">從 HuggingFace 下載，下載後依檔案大小驗證</string>
@@ -60,5 +57,6 @@
     <string name="settings_default_model_line">使用模型：%1$s</string>
     <string name="settings_models_ready">已就緒模型：%1$s</string>
     <string name="settings_models_used">已佔用空間：%1$s</string>
+    <string name="a11y_download">%1$s %2$s</string>
     <string name="btn_open_models">去下載模型</string>
 </resources>
