@@ -9,9 +9,9 @@ Forked from [Soodok/dsh-asr-service](https://github.com/Soodok/dsh-asr-service) 
 ## Changes from the original project
 
 - Traditional Chinese output
-- Spoken punctuation: say 逗號, 句號, 問號, 驚嘆號, 冒號, 分號, 頓號, 刪節號 or 換行 in Chinese, or comma, period, full stop, question mark, exclamation mark, colon, semicolon or new line in English
-- No automatic full stop at the end of each sentence (SenseVoice adds one); say 句號 or "period" when you want one
-- The model stays loaded in memory: loading takes about 9 s on the F21 Pro, then every sentence is fast. This uses about 300 MB of RAM and no CPU while idle; the notification shows 離線語音輸入已就緒 ("offline voice input ready")
+- Spoken punctuation in Chinese and English: say "comma", "period", "question mark", "new line" and so on
+- No automatic full stop at the end of each sentence; say "period" when you want one
+- The model stays loaded in memory, so every sentence is fast
 - Switching between Chinese and English needs no reload; English comes out in normal case instead of all capitals
 - A short vibration when recording starts, so you know when to speak
 - Decoding uses 4 threads and skips live previews while recording, so the result arrives sooner
@@ -29,7 +29,7 @@ Forked from [Soodok/dsh-asr-service](https://github.com/Soodok/dsh-asr-service) 
 ## Installation
 
 1. Download the APK from [Releases](../../releases) and install it.
-2. Open 「SenseVoice 語音輸入」, go to 「辨識模型」 (models) and download **SenseVoice Small** (239 MB; Wi-Fi recommended).
+2. Open the app, go to the models page and download **SenseVoice Small** (239 MB; Wi-Fi recommended).
 3. Grant microphone access.
 4. Select the app as the system voice input service: Settings → System → Languages & input → Voice input. If your phone has no such page, use adb:
 
@@ -55,7 +55,7 @@ Recognition runs entirely on the phone; audio and text never leave it. There are
 | Network | Downloading the SenseVoice model; you can turn off the app's network access afterwards without affecting use |
 | Run at startup | Loading the model after boot, so the first sentence needs no wait |
 | Foreground service | Keeping the model in memory, so text appears quickly |
-| Notifications | Android requires a notification for a foreground service (離線語音輸入已就緒) |
+| Notifications | Android requires a notification for a foreground service |
 
 If you restrict the app's background activity, Android stops it and the model must reload (about 9 s) before every sentence. Turning off network access has no such effect.
 
