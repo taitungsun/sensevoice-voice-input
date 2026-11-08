@@ -45,7 +45,7 @@ Apache-2.0; see [LICENSE](LICENSE) and [NOTICE](NOTICE). The SenseVoice Small mo
 
 ## 繁體中文
 
-Android 離線語音輸入。說中文或英文都可以，中文會輸出繁體字。辨識全程在手機上完成，只有第一次下載模型時需要網路。
+Android 離線語音輸入。中文、英文都能說，中文輸出繁體字。辨識全程在手機上完成，只有第一次下載模型時需要網路。
 
 為 Qin F21 Pro 等低階按鍵手機，以及長輩和不方便打字的人設計。適用 Android 8.0 以上的 arm64 手機。改編自 [Soodok/dsh-asr-service](https://github.com/Soodok/dsh-asr-service)。
 
