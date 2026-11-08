@@ -15,7 +15,7 @@ Made for low-end keypad phones such as the Qin F21 Pro, and for seniors and anyo
 
 ## Install
 
-1. Install the APK from [Releases](../../releases).
+1. Install the APK from [Releases](../../releases), or add `https://github.com/taitungsun/sensevoice-voice-input` in [Obtainium](https://github.com/ImranR98/Obtainium) to get updates automatically.
 2. In the app, download **SenseVoice Small** (239 MB).
 3. Settings → Languages & input → Voice input → choose this app. If there is no such page:
 
@@ -58,7 +58,7 @@ Android 離線語音輸入。中文、英文都能說，中文輸出繁體字。
 
 ### 安裝
 
-1. 從 [Releases](../../releases) 下載 APK 並安裝。
+1. 從 [Releases](../../releases) 下載 APK 並安裝；或在 [Obtainium](https://github.com/ImranR98/Obtainium) 加入 `https://github.com/taitungsun/sensevoice-voice-input`，即可自動更新。
 2. 在 App 中下載 **SenseVoice Small**（239 MB）。
 3. 系統設定 → 語言與輸入設定 → 語音輸入 → 選擇本 App。沒有這個設定頁時：
 
