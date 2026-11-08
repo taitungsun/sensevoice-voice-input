@@ -16,8 +16,8 @@ android {
         minSdk = 26
         // targetSdk 28 —— 與 dsh-android 保持一致（側載發布策略）
         targetSdk = 28
-        versionCode = 16
-        versionName = "0.5.2-tw.4"
+        versionCode = 17
+        versionName = "0.5.2-tw.5"
 
         ndk {
             abiFilters += listOf(targetAbi)
@@ -58,6 +58,14 @@ android {
     }
     lint {
         abortOnError = false
+    }
+
+    // sherpa-onnx 的 C / C++ API 函式庫沒有被用到（Kotlin 走 libsherpa-onnx-jni.so，
+    // 它只依賴 libonnxruntime.so）。拿掉約 4.9 MB，讓 APK 低於 IzzyOnDroid 的 30 MB 上限。
+    packaging {
+        jniLibs {
+            excludes += listOf("**/libsherpa-onnx-c-api.so", "**/libsherpa-onnx-cxx-api.so")
+        }
     }
 }
 
