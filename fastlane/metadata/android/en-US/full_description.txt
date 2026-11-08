@@ -1,27 +1,20 @@
-Offline speech-to-text: recognition runs entirely on the phone, and neither audio nor text ever leaves it. The network is needed only once, to download the model. After installation the app becomes Android's system speech recognition service, so you can dictate by pressing the voice key of a keyboard such as TT9.
+Offline voice input for Android. Speak Mandarin to get Traditional Chinese, or speak English. Everything runs on the phone; the network is used only once, to download the model.
 
-Forked from Soodok/dsh-asr-service and optimized for low-end keypad phones such as the Qin F21 Pro; every screen works with the D-pad. It also works on other arm64 phones with Android 8.0 or later. The app's own screens are in Traditional Chinese.
-
-Made for seniors and anyone who finds typing hard: no need to learn Zhuyin or stroke input, just press one key and speak. The app uses large, high-contrast text and works with the TalkBack screen reader.
+Made for low-end keypad phones such as the Qin F21 Pro, and for seniors and anyone who finds typing hard. The app's screens are in Traditional Chinese.
 
 <b>Features</b>
 <ul>
-<li>Speak Mandarin and get Traditional Chinese text, or speak English</li>
-<li>Spoken punctuation in Chinese and English: say "comma", "period", "question mark", "new line" and so on</li>
-<li>No automatic full stop at the end of each sentence; say "period" when you want one</li>
-<li>Fast: about 1–2 s after you stop speaking on a Qin F21 Pro (MT6761)</li>
-<li>The model stays loaded in memory (about 300 MB), so no reload per sentence and no CPU use while idle</li>
-<li>A short vibration when recording starts, so you know when to speak</li>
+<li>Works as Android's system voice input, e.g. from the voice key in TT9</li>
+<li>Spoken punctuation: say "comma", "period", "new line" and so on</li>
+<li>No automatic full stop at the end of a sentence</li>
+<li>Large text, full keypad navigation, TalkBack support</li>
+<li>No ads, no tracking</li>
 </ul>
 
 <b>Before first use</b>
 <ul>
-<li>Open the app, go to the models page and download SenseVoice Small (239 MB; Wi-Fi recommended)</li>
-<li>Select the app under Settings → System → Languages &amp; input → Voice input</li>
-<li>With TT9, the keyboard itself also needs microphone permission</li>
+<li>In the app, download SenseVoice Small (239 MB)</li>
+<li>Settings → Languages &amp; input → Voice input → choose this app</li>
 </ul>
 
-<b>Privacy</b>
-No ads, and no usage data is collected or sent. The network is used only to download the speech model from HuggingFace; you can turn off the app's network access afterwards without affecting use.
-
-The SenseVoice Small model is released by FunAudioLLM (Alibaba Group) under the FunASR Model License and is not included in the APK. Recognition engine: sherpa-onnx.
+The network is used only to download the speech model from HuggingFace; you can turn it off afterwards. SenseVoice Small is by FunAudioLLM (Alibaba Group) under the FunASR Model License.
