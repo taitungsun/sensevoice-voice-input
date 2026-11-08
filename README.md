@@ -9,8 +9,7 @@ Made for low-end keypad phones such as the Qin F21 Pro, and for seniors and anyo
 ## Features
 
 - Works as Android's system voice input, e.g. from the voice key in TT9
-- Spoken punctuation: say "comma", "period", "new line" and so on
-- No automatic full stop at the end of a sentence
+- Spoken punctuation: say "comma", "period", "new line" and so on; no automatic full stop
 - Large text, full keypad navigation, TalkBack support
 - No ads, no tracking
 
@@ -18,26 +17,21 @@ Made for low-end keypad phones such as the Qin F21 Pro, and for seniors and anyo
 
 1. Install the APK from [Releases](../../releases).
 2. In the app, download **SenseVoice Small** (239 MB).
-3. Allow microphone access.
-4. Settings → Languages & input → Voice input → choose this app. If there is no such page:
+3. Settings → Languages & input → Voice input → choose this app. If there is no such page:
 
    ```
    adb shell settings put secure voice_recognition_service io.github.taitungsun.sensevoice/app.dsh.asr.AsrRecognitionService
    ```
 
-With TT9, the keyboard also needs microphone access, and other voice input apps (such as whisperIME) must be disabled, or TT9 opens them instead.
+With TT9, the keyboard also needs microphone access, and other voice input apps must be disabled, or TT9 opens them instead.
 
-## Permissions
+## Background running
 
-Microphone for voice input. Network only to download the model; you can turn it off afterwards. Run at startup, foreground service and a notification keep the model loaded, so text appears quickly. Don't restrict background activity, or the model reloads (about 9 s) every time.
+The app stays in the background (with a notification) to keep the model loaded. Don't restrict its background activity, or the model reloads (about 9 s) every time.
 
 ## Signing
 
-All release APKs use the same key. Certificate SHA-256:
-
-```
-bf:f0:94:b6:2c:5f:55:c5:11:fa:5f:af:c0:77:33:54:4a:ed:b3:05:4c:4c:8f:61:33:b1:05:63:40:86:96:db
-```
+Certificate SHA-256: `bf:f0:94:b6:2c:5f:55:c5:11:fa:5f:af:c0:77:33:54:4a:ed:b3:05:4c:4c:8f:61:33:b1:05:63:40:86:96:db`
 
 ## Building
 
@@ -45,7 +39,7 @@ JDK 17, Android SDK (platform 36), Gradle 8.13+. Put `sherpa-onnx-1.13.8.aar` fr
 
 ## License
 
-Apache-2.0; see [LICENSE](LICENSE) and [NOTICE](NOTICE). The model is not included; the app downloads it from HuggingFace. SenseVoice Small is by FunAudioLLM (Alibaba Group) under the [FunASR Model License](https://github.com/modelscope/FunASR/blob/main/MODEL_LICENSE).
+Apache-2.0; see [LICENSE](LICENSE) and [NOTICE](NOTICE). The SenseVoice Small model (FunAudioLLM, Alibaba Group) is under the [FunASR Model License](https://github.com/modelscope/FunASR/blob/main/MODEL_LICENSE).
 
 ---
 
@@ -58,8 +52,7 @@ Android 離線語音輸入。說國語輸出繁體中文，也可以說英文。
 ### 特色
 
 - 作為系統語音輸入服務，在 TT9 等輸入法按語音鍵即可使用
-- 口述標點：說「逗號」「句號」「問號」「驚嘆號」「冒號」「分號」「頓號」「刪節號」「換行」
-- 句尾不自動加句號
+- 口述標點：說「逗號」「句號」「問號」「驚嘆號」「冒號」「分號」「頓號」「刪節號」「換行」；句尾不自動加句號
 - 字體大、可完全用按鍵操作、支援 TalkBack
 - 沒有廣告，不收集資料
 
@@ -67,26 +60,21 @@ Android 離線語音輸入。說國語輸出繁體中文，也可以說英文。
 
 1. 從 [Releases](../../releases) 下載 APK 並安裝。
 2. 在 App 中下載 **SenseVoice Small**（239 MB）。
-3. 允許麥克風權限。
-4. 系統設定 → 語言與輸入設定 → 語音輸入 → 選擇本 App。沒有這個設定頁時：
+3. 系統設定 → 語言與輸入設定 → 語音輸入 → 選擇本 App。沒有這個設定頁時：
 
    ```
    adb shell settings put secure voice_recognition_service io.github.taitungsun.sensevoice/app.dsh.asr.AsrRecognitionService
    ```
 
-使用 TT9 時，TT9 本身也需要麥克風權限；若裝有其他語音輸入 App（例如 whisperIME）須先停用，否則 TT9 會開啟那個 App。
+使用 TT9 時，TT9 本身也需要麥克風權限；若裝有其他語音輸入 App 須先停用，否則 TT9 會開啟那個 App。
 
-### 權限
+### 背景執行
 
-麥克風用於語音輸入。網路只用來下載模型，下載後可關閉。開機啟動、前景服務與通知讓模型常駐，出字更快。請勿限制本 App 的背景執行，否則每次說話都要重新載入模型（約 9 秒）。
+本 App 會在背景常駐（並顯示通知）以保持模型載入。請勿限制它的背景執行，否則每次說話都要重新載入模型（約 9 秒）。
 
 ### 簽章
 
-所有 Release 的 APK 都以同一把金鑰簽章，憑證 SHA-256：
-
-```
-bf:f0:94:b6:2c:5f:55:c5:11:fa:5f:af:c0:77:33:54:4a:ed:b3:05:4c:4c:8f:61:33:b1:05:63:40:86:96:db
-```
+憑證 SHA-256：`bf:f0:94:b6:2c:5f:55:c5:11:fa:5f:af:c0:77:33:54:4a:ed:b3:05:4c:4c:8f:61:33:b1:05:63:40:86:96:db`
 
 ### 自行建置
 
@@ -94,4 +82,4 @@ bf:f0:94:b6:2c:5f:55:c5:11:fa:5f:af:c0:77:33:54:4a:ed:b3:05:4c:4c:8f:61:33:b1:05
 
 ### 授權
 
-Apache-2.0，詳見 [LICENSE](LICENSE) 與 [NOTICE](NOTICE)。語音模型不包含在本專案中，由 App 從 HuggingFace 下載。SenseVoice Small 由 FunAudioLLM（阿里巴巴集團）釋出，採用 [FunASR Model License](https://github.com/modelscope/FunASR/blob/main/MODEL_LICENSE)。
+Apache-2.0，詳見 [LICENSE](LICENSE) 與 [NOTICE](NOTICE)。SenseVoice Small 模型（FunAudioLLM，阿里巴巴集團）採用 [FunASR Model License](https://github.com/modelscope/FunASR/blob/main/MODEL_LICENSE)。
