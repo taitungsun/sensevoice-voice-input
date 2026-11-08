@@ -2,7 +2,7 @@
 
 [繁體中文說明](#繁體中文)
 
-Offline voice input for Android. Speak Mandarin to get Traditional Chinese, or speak English. Everything runs on the phone; the network is used only once, to download the model.
+Offline voice input for Android. Speak Chinese or English; Chinese comes out in Traditional characters. Everything runs on the phone; the network is used only once, to download the model.
 
 Made for low-end keypad phones such as the Qin F21 Pro, and for seniors and anyone who finds typing hard. Works on arm64 phones with Android 8.0 or later. Forked from [Soodok/dsh-asr-service](https://github.com/Soodok/dsh-asr-service).
 
@@ -45,7 +45,7 @@ Apache-2.0; see [LICENSE](LICENSE) and [NOTICE](NOTICE). The SenseVoice Small mo
 
 ## 繁體中文
 
-Android 離線語音輸入。說國語輸出繁體中文，也可以說英文。辨識全程在手機上完成，只有第一次下載模型時需要網路。
+Android 離線語音輸入。說中文或英文都可以，中文會輸出繁體字。辨識全程在手機上完成，只有第一次下載模型時需要網路。
 
 為 Qin F21 Pro 等低階按鍵手機，以及長輩和不方便打字的人設計。適用 Android 8.0 以上的 arm64 手機。改編自 [Soodok/dsh-asr-service](https://github.com/Soodok/dsh-asr-service)。
 

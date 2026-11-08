@@ -1,4 +1,4 @@
-Offline voice input for Android. Speak Mandarin to get Traditional Chinese, or speak English. Everything runs on the phone; the network is used only once, to download the model.
+Offline voice input for Android. Speak Chinese or English; Chinese comes out in Traditional characters. Everything runs on the phone; the network is used only once, to download the model.
 
 Made for low-end keypad phones such as the Qin F21 Pro, and for seniors and anyone who finds typing hard. The app's screens are in Traditional Chinese.
 
