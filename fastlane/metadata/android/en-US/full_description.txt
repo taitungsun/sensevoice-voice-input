@@ -6,7 +6,7 @@ Made for seniors and anyone who finds typing hard: no need to learn Zhuyin or st
 
 <b>Features</b>
 <ul>
-<li>Speak Mandarin and get Traditional Chinese text (Taiwan character forms), or speak English. Your words are kept as spoken, never swapped for other vocabulary</li>
+<li>Speak Mandarin and get Traditional Chinese text, or speak English</li>
 <li>Spoken punctuation: say 逗號, 句號, 問號, 換行 and more in Chinese, or comma, period, question mark, new line and more in English</li>
 <li>No automatic full stop at the end of each sentence; say 句號 or "period" when you want one</li>
 <li>Fast: about 1–2 s after you stop speaking on a Qin F21 Pro (MT6761)</li>

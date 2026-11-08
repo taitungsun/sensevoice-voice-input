@@ -8,7 +8,7 @@ Forked from [Soodok/dsh-asr-service](https://github.com/Soodok/dsh-asr-service) 
 
 ## Changes from the original project
 
-- Traditional Chinese output (Taiwan character forms). Your words are kept as spoken, never swapped for other vocabulary
+- Traditional Chinese output
 - Spoken punctuation: say 逗號, 句號, 問號, 驚嘆號, 冒號, 分號, 頓號, 刪節號 or 換行 in Chinese, or comma, period, full stop, question mark, exclamation mark, colon, semicolon or new line in English
 - No automatic full stop at the end of each sentence (SenseVoice adds one); say 句號 or "period" when you want one
 - The model stays loaded in memory: loading takes about 9 s on the F21 Pro, then every sentence is fast. This uses about 300 MB of RAM and no CPU while idle; the notification shows 離線語音輸入已就緒 ("offline voice input ready")
@@ -90,7 +90,7 @@ Code is Apache License 2.0; see [LICENSE](LICENSE) and [NOTICE](NOTICE). The mod
 
 ### 與原專案的差異
 
-- 輸出繁體中文，你說什麼詞就打出什麼詞，不會自動改掉用詞
+- 輸出繁體中文
 - 口述標點：說「逗號」「句號」「問號」「驚嘆號」「冒號」「分號」「頓號」「刪節號」「換行」會轉成標點符號；英文可說 comma、period、full stop、question mark、exclamation mark、colon、semicolon、new line
 - 不在每句結尾自動加句號（SenseVoice 原本會加），需要時說「句號」即可
 - 模型常駐記憶體：載入一次約需 9 秒（F21 Pro），之後每句不必重新載入。常駐約佔 300 MB 記憶體，待機時不耗 CPU，通知列會顯示「離線語音輸入已就緒」
