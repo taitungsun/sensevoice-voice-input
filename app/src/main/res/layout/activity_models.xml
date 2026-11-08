@@ -39,14 +39,20 @@
             android:textSize="11sp" />
     </LinearLayout>
 
-    <ListView
-        android:id="@+id/listModels"
+    <!-- 原本是 ListView：每列內含兩個按鈕，D-pad 焦點進不去/會跳。
+         模型只有一兩個，改用 ScrollView + LinearLayout，按鍵手機可正常上下移動。 -->
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:divider="@null"
-        android:dividerHeight="0dp"
-        android:paddingStart="20dp"
-        android:paddingEnd="20dp"
-        android:scrollbars="none" />
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:id="@+id/listModels"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp" />
+    </ScrollView>
 </LinearLayout>

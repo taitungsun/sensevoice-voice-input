@@ -6,9 +6,7 @@ import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import android.widget.BaseAdapter
-import android.widget.ListView
+import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
 import java.util.Locale
@@ -34,7 +32,7 @@ class ModelsActivity : Activity(), DownloadBus.Listener {
             onDelete = { model -> confirmDelete(model) },
         )
 
-        findViewById<ListView>(R.id.listModels).adapter = adapter
+        adapter.attach(findViewById(R.id.listModels))
         findViewById<TextView>(R.id.tvDir).text = getString(R.string.models_dir, store.root.absolutePath)
     }
 
@@ -95,16 +93,24 @@ class ModelsActivity : Activity(), DownloadBus.Listener {
         private val ctx: Context,
         private val onDownload: (AsrModel) -> Unit,
         private val onDelete: (AsrModel) -> Unit,
-    ) : BaseAdapter() {
+    ) {
+        // 每個模型一個固定的 View；更新時只改內容，不重建，D-pad 焦點才不會在下載進度更新時跑掉
+        private val views = ArrayList<View>()
 
-        override fun getCount(): Int = ModelCatalog.MODELS.size
-        override fun getItem(position: Int): Any = ModelCatalog.MODELS[position]
-        override fun getItemId(position: Int): Long = position.toLong()
+        fun attach(container: LinearLayout) {
+            ModelCatalog.MODELS.forEach { _ ->
+                val v = LayoutInflater.from(ctx).inflate(R.layout.item_model, container, false)
+                container.addView(v)
+                views.add(v)
+            }
+            notifyDataSetChanged()
+        }
 
-        override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
-            val view = convertView
-                ?: LayoutInflater.from(ctx).inflate(R.layout.item_model, parent, false)
+        fun notifyDataSetChanged() {
+            views.forEachIndexed { i, v -> bind(i, v) }
+        }
 
+        private fun bind(position: Int, view: View): View {
             val model = ModelCatalog.MODELS[position]
             val state = store.state(model)
             val running = DownloadBus.isRunning(model.id)

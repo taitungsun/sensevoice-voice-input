@@ -1,5 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- 可點卡片：D-pad 焦點時加亮邊框（按鍵手機看得出目前選到哪裡） -->
 <ripple xmlns:android="http://schemas.android.com/apk/res/android"
     android:color="@color/accent_dim">
-    <item android:drawable="@drawable/bg_card" />
+    <item>
+        <selector>
+            <item android:state_focused="true">
+                <shape android:shape="rectangle">
+                    <solid android:color="@color/card_pressed" />
+                    <corners android:radius="16dp" />
+                    <stroke android:width="2dp" android:color="@color/accent" />
+                </shape>
+            </item>
+            <item android:drawable="@drawable/bg_card" />
+        </selector>
+    </item>
 </ripple>

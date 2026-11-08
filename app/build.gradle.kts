@@ -16,8 +16,8 @@ android {
         minSdk = 26
         // targetSdk 28 —— 與 dsh-android 保持一致（側載發布策略）
         targetSdk = 28
-        versionCode = 14
-        versionName = "0.5.2-tw.2"
+        versionCode = 15
+        versionName = "0.5.2-tw.3"
 
         ndk {
             abiFilters += listOf(targetAbi)

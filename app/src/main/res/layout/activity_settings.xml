@@ -48,6 +48,8 @@
                     android:layout_height="wrap_content"
                     android:text="@string/lang_auto"
                     android:textColor="@color/text_primary"
+                    android:background="@drawable/bg_focus_row"
+                    android:paddingVertical="6dp"
                     android:textSize="14sp" />
                 <RadioButton
                     android:id="@+id/rbZh"
@@ -55,6 +57,8 @@
                     android:layout_height="wrap_content"
                     android:text="@string/lang_zh"
                     android:textColor="@color/text_primary"
+                    android:background="@drawable/bg_focus_row"
+                    android:paddingVertical="6dp"
                     android:textSize="14sp" />
                 <RadioButton
                     android:id="@+id/rbEn"
@@ -62,6 +66,8 @@
                     android:layout_height="wrap_content"
                     android:text="@string/lang_en"
                     android:textColor="@color/text_primary"
+                    android:background="@drawable/bg_focus_row"
+                    android:paddingVertical="6dp"
                     android:textSize="14sp" />
             </RadioGroup>
         </LinearLayout>
@@ -85,6 +91,9 @@
 
             <SeekBar
                 android:id="@+id/sbSilence"
+                android:background="@drawable/bg_focus_row"
+                android:paddingVertical="12dp"
+                android:focusable="true"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:max="26" />
@@ -106,6 +115,9 @@
 
             <SeekBar
                 android:id="@+id/sbMaxLen"
+                android:background="@drawable/bg_focus_row"
+                android:paddingVertical="12dp"
+                android:focusable="true"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:max="11" />
@@ -120,6 +132,9 @@
 
             <SeekBar
                 android:id="@+id/sbNoSpeech"
+                android:background="@drawable/bg_focus_row"
+                android:paddingVertical="12dp"
+                android:focusable="true"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:max="17" />
@@ -153,6 +168,8 @@
 
             <TextView
                 android:id="@+id/btnOpenModels"
+                android:clickable="true"
+                android:focusable="true"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"

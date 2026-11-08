@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 清單列 / 單選鈕 / 滑桿：D-pad 焦點時顯示淡色底 + 邊框 -->
+<ripple xmlns:android="http://schemas.android.com/apk/res/android"
+    android:color="@color/accent_dim">
+    <item>
+        <selector>
+            <item android:state_focused="true">
+                <shape android:shape="rectangle">
+                    <solid android:color="@color/accent_dim" />
+                    <corners android:radius="10dp" />
+                    <stroke android:width="2dp" android:color="@color/accent" />
+                </shape>
+            </item>
+            <item android:drawable="@android:color/transparent" />
+        </selector>
+    </item>
+</ripple>

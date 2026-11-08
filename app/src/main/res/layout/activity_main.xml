@@ -105,8 +105,11 @@
                 android:gravity="center_vertical"
                 android:clickable="true"
                 android:focusable="true"
-                android:background="?android:attr/selectableItemBackground"
+                android:background="@drawable/bg_focus_row"
+                android:paddingHorizontal="6dp"
                 android:paddingVertical="10dp">
+
+                <requestFocus />
 
                 <ImageView
                     android:layout_width="36dp"
@@ -161,7 +164,8 @@
                 android:gravity="center_vertical"
                 android:clickable="true"
                 android:focusable="true"
-                android:background="?android:attr/selectableItemBackground"
+                android:background="@drawable/bg_focus_row"
+                android:paddingHorizontal="6dp"
                 android:paddingVertical="10dp">
 
                 <ImageView
