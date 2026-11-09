@@ -7,7 +7,7 @@ Test on a real phone (Qin F21 Pro) before every release.
 - [ ] Install the new APK over the previous version; the downloaded model is still there
 - [ ] Chinese sentence through TT9's voice key: correct Traditional characters, no full stop at the end
 - [ ] English sentence: normal capitals, not all capitals
-- [ ] Spoken punctuation: "逗號", "句號" and "換行" become ， 。 and a new line
+- [ ] Spoken punctuation: say comma, period and new line, in Chinese and in English; the right marks appear
 - [ ] Reboot the phone, wait a minute, then speak: the first sentence is fast (the model loaded at startup)
 - [ ] Move through every app screen with the keypad only, without touching the screen
 - [ ] Read any changed text (README, store text, app screens): clear wording, Taiwan usage
