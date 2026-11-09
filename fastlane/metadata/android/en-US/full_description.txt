@@ -1,6 +1,6 @@
 Offline voice input for Android. Speak Chinese or English; Chinese comes out in Traditional characters. Everything runs on the phone; the network is used only once, to download the model.
 
-Made for low-end keypad phones such as the Qin F21 Pro, and for seniors and anyone who finds typing hard. The app's screens are in Traditional Chinese.
+Made for low-end keypad phones such as the Qin F21 Pro, and for seniors and anyone who finds typing hard. Tested on the Qin F21 Pro; it should also work on other arm64 phones with Android 8.0 or later. The app's screens are in Traditional Chinese.
 
 <b>Features</b>
 <ul>
@@ -8,7 +8,7 @@ Made for low-end keypad phones such as the Qin F21 Pro, and for seniors and anyo
 <li>Spoken punctuation: say "comma", "period", "new line" and so on</li>
 <li>No automatic full stop at the end of a sentence</li>
 <li>Large text, full keypad navigation, TalkBack support</li>
-<li>No ads, no tracking</li>
+<li>No ads, no tracking; the app collects and sends nothing</li>
 </ul>
 
 <b>Before first use</b>
@@ -17,4 +17,4 @@ Made for low-end keypad phones such as the Qin F21 Pro, and for seniors and anyo
 <li>Settings → Languages &amp; input → Voice input → choose this app</li>
 </ul>
 
-The network is used only to download the speech model from HuggingFace; you can turn it off afterwards. SenseVoice Small is by FunAudioLLM (Alibaba Group) under the FunASR Model License.
+The network is used only to download the speech model from HuggingFace, which sees that one download like any website; you can turn it off afterwards. SenseVoice Small is by FunAudioLLM (Alibaba Group) under the FunASR Model License.

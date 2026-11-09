@@ -1,6 +1,6 @@
 Android 離線語音輸入。中文、英文都能說，中文輸出繁體字。辨識全程在手機上完成，只有第一次下載模型時需要網路。
 
-為 Qin F21 Pro 等低階按鍵手機，以及長輩和不方便打字的人設計。
+為 Qin F21 Pro 等低階按鍵手機，以及長輩和不方便打字的人設計。已在 Qin F21 Pro 上實測，其他 Android 8.0 以上的 arm64 手機應該也能使用。
 
 <b>特色</b>
 <ul>
@@ -8,7 +8,7 @@ Android 離線語音輸入。中文、英文都能說，中文輸出繁體字。
 <li>口述標點：說「逗號」「句號」「問號」「換行」等</li>
 <li>句尾不自動加句號</li>
 <li>字體大、可完全用按鍵操作、支援 TalkBack</li>
-<li>沒有廣告，不收集資料</li>
+<li>沒有廣告，不追蹤，App 不收集也不回傳任何資料</li>
 </ul>
 
 <b>使用前</b>
@@ -17,4 +17,4 @@ Android 離線語音輸入。中文、英文都能說，中文輸出繁體字。
 <li>系統設定 → 語言與輸入設定 → 語音輸入 → 選擇本 App</li>
 </ul>
 
-網路只用來從 HuggingFace 下載語音模型，下載後可關閉。SenseVoice Small 由 FunAudioLLM（阿里巴巴集團）釋出，採用 FunASR Model License。
+網路只用來從 HuggingFace 下載語音模型（HuggingFace 會看到這次下載，就像瀏覽一般網站），下載後可關閉。SenseVoice Small 由 FunAudioLLM（阿里巴巴集團）釋出，採用 FunASR Model License。
