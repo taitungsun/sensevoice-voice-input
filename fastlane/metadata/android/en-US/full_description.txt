@@ -1,6 +1,6 @@
 Offline voice input for Android. Speak Chinese or English; Chinese comes out in Traditional characters. Everything runs on the phone; the network is used only once, to download the model.
 
-Made for low-end keypad phones such as the Qin F21 Pro, and for seniors and anyone who finds typing hard. Tested on the Qin F21 Pro; it should also work on other arm64 phones with Android 8.0 or later. The app's screens are in Traditional Chinese.
+Designed for low-end keypad phones such as the Qin F21 Pro, with seniors and anyone who finds typing hard in mind. Tested on the Qin F21 Pro; it should also work on other arm64 phones with Android 8.0 or later. The app's screens are in Traditional Chinese.
 
 <b>Features</b>
 <ul>

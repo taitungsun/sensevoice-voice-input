@@ -1,1 +1,1 @@
-Offline speech-to-text in Traditional Chinese, for seniors and keypad phones
+Offline Traditional Chinese voice input for keypad phones, with seniors in mind
